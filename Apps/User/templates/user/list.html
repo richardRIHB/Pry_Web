@@ -1,0 +1,130 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_list %}
+    <link rel="stylesheet" href="{% static 'user/css/list.css' %}"/>
+    <script src="{% static 'user/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width: 5%">Nº</th>
+        <th scope="col">Nombres</th>
+        <th scope="col">Apellidos</th>
+        <th scope="col">UserName</th>
+        <th scope="col">Fecha de registro</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Imagen</th>
+        <th scope="col">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+
+{% endblock %}
+
+{% block buttons_list %}
+    <div class="card-footer">
+
+        <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <!-- Modal -->
+    <div class="modal fade" id="myModalUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" action="." enctype="multipart/form-data">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <b><i class="fas fa-search"></i> <span></span></b>
+                        </h5>
+                        <button type="button" class="close cerrarModal" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="primera-columna">
+                                <input name="action" type="hidden" value="add">
+                                <input name="id" id="id" type="hidden" value="0">
+                                <div class="form-group">
+                                    <label for="email">{{ form.first_name.label }}:</label>
+                                    {{ form.first_name|attr:'maxlength:25' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.username.label }}:</label>
+                                    {{ form.username|attr:'maxlength:20' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.password.label }}:</label>
+                                    {{ form.password }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Estado:</label>
+                                    {{ form.is_active }}
+                                </div>
+                            </div>
+                            <div class="segunda-columna">
+                                <div class="form-group">
+                                    <label for="email">{{ form.last_name.label }}:</label>
+                                    {{ form.last_name|attr:'maxlength:25' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.email.label }}:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">@</div>
+                                        </div>
+                                        {{ form.email|attr:'maxlength:25' }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.imagen.label }}:</label>
+                                    {{ form.imagen }}
+                                    <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
+                                </div>
+                                <div class="box box-primary contenedorimg2" id="visorArchivo" align="center">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $('#myModalUsuario').on('shown.bs.modal', function () {
+            $('#id_first_name').focus()
+        });
+        $("#id_productos").hide();
+        $("#id_venta").hide();
+        $("#id_cuentas").hide();
+        $("#id_proveedor").show();
+        $("#id_compra").hide();
+        $("#id_devolucion_compra").hide();
+        $("#id_cuentas_compra").hide();
+        $("#id_usuario_user").show();
+        $("#id_clientes").show();
+        $("#id_empresa").show();
+        document.getElementById('empresa_text').innerHTML =
+            '<h3>Empresa</h3>'
+    </script>
+{% endblock %}

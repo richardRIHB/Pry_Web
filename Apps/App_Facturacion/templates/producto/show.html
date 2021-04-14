@@ -1,0 +1,131 @@
+{% extends 'App_Facturacion/layout.html' %} }}
+
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'lib/datatables/css/dataTables.bootstrap4.min.css' %}"/>
+    <link rel="stylesheet"
+          href="{% static 'lib/datatables/plugins/responsive-2.2.3/css/responsive.bootstrap4.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'producto/css/show.css' %}"/>
+    <script src="{% static 'lib/datatables/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'lib/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'lib/datatables/plugins/responsive-2.2.3/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables/plugins/responsive-2.2.3/js/responsive.bootstrap4.min.js' %}"></script>
+
+    {% block head_list %}
+
+    {% endblock %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-search"></i>
+                {{ title }} / {{ date_now }}
+            </h3>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box box-primary contenerGaleria" , id="base">
+                        <div class="contenedorImagen" id="big">
+                            {% if object.imagen  %}
+                                <img class="img-responsive" width="100%" src="/media/{{ object.imagen }}" alt="Photo">
+                            {% else %}
+                                <img class="img-responsive" width="100%" src="{% static 'img/empty.png' %}" alt="Photo">
+                            {% endif %}
+                        </div>
+                        <div class="box box-primary contenedorMiniaturas" id="miniaturas">
+                            {% if object.imagen  %}
+                                <img class="img-responsive" src="/media/{{ object.imagen }}" alt="Photo" id="activo">
+                            {% else %}
+                                <img class="img-responsive" src="{% static 'img/empty.png' %}" alt="Photo" id="activo">
+                            {% endif %}
+                            {% for foo in galeria %}
+                                <img class="img-responsive" src="{{ foo.ruta }}" alt="Photo">
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box box-primary">
+
+                        <div class="box-header with-border">
+                            <h3 class="title">Acerca de: {{ object.nombre }}</h3>
+                        </div>
+
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <strong><i class="fas fa-edit"></i> Descripcion:</strong>
+                            <p>
+                                {{ object.descripcion }}
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fa-map-marker-alt margin-r-5"></i> Ubicacion:</strong>
+                            <p>
+                                Bloque:<strong>{{ object.bloque }}</strong>({{ object.bloque.descripcion }}) &nbsp;
+                                Seccion: <strong>{{ object.seccion }}</strong>({{ object.seccion.descripcion }}) &nbsp;
+                                Posicion: <strong>{{ object.posicion }}</strong>({{ object.posicion.descripcion }})
+                            </p>
+                            <p>
+                                Codigo: <strong>{{ object.bloque }}{{ object.seccion }}{{ object.posicion }} </strong>
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fas fa-building margin-r-5"></i> Marca:</strong>
+                            <p>
+                                {{ object.marca }} ({{ object.marca.descripcion }})
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fa-money-bill-wave"></i> Precio:</strong>
+                            <p>$ {{ object.precio }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-check-double"></i> Stock:</strong>
+                            <p>
+                                <span class="badge badge-info ">{{ object.stock }}</span>
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fa-check-double"></i> Stock Minimo:</strong>
+                            <p>
+                                <span class="badge badge-secondary ">{{ object.stock_minimo }}</span>
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fa-check-square"></i> Estado:</strong>
+                            <p>
+                                {% if object.estado == True %}
+                                    <span class="badge badge-success ">Activo</span>
+                                {% else %}
+                                    <span class="badge badge-warning ">Bloqueado</span>
+                                {% endif %}
+                            </p>
+
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'producto/js/show.js' %}"></script>
+    <script>
+        $("#id_marca").show();
+        $("#id_ubicacion").show();
+        $("#id_galeria").show();
+    </script>
+{% endblock %}

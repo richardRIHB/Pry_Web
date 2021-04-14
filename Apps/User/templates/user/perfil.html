@@ -1,0 +1,21 @@
+{% extends 'App_Facturacion/form.html' %}
+{% load static %}
+{% block head_list %}
+    <link rel="stylesheet" href="{% static 'user/css/list.css' %}"/>
+    <script src="{% static 'user/js/show.js' %}"></script>
+{% endblock %}
+{% block contenedor2 %}
+    <div class="form-group">
+        <label for="email">Imagen:</label>
+        <input type="file" name="imagen" class="nuestroinput" for="nuestroinput" onchange="return validarInputFile()" id="id_imagen">
+        <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
+    </div>
+    <div class="box box-primary contenedorimg2" id="visorArchivo" align="center">
+        '<img src="{{ request.user.get_image }}" alt="Mi imagen" id="miImagen" width="50%" height="300" border=50px>'
+    </div>
+    <script>
+        var imag = "{{ request.user.get_image }}"
+        console.log(imag)
+    </script>
+
+{% endblock contenedor2 %}

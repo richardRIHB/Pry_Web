@@ -1,0 +1,93 @@
+{% extends 'App_Facturacion/layout.html' %} }}
+
+{% load static %}
+
+{% block head %}
+
+    <link rel="stylesheet" href="{% static 'galeria/css/show.css' %}"/>
+
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-search"></i>
+                {{ title }} / {{ date_now }}
+            </h3>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box box-primary">
+
+                        <div class="contenedorImagen" id="big">
+                            <img class="img-responsive" width="100%" src="/media/{{ object.ruta }}" alt="Photo">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box box-primary">
+
+                        <div class="box-header with-border">
+                            <h3 class="title">Acerca de: {{ object }}</h3>
+                        </div>
+
+                        <!-- /.box-header -->
+                        <div class="box-body">
+
+                            <strong><i class="fas fa-edit"></i> Nombre de imagen:</strong>
+                            <p>&nbsp;{{ object.nombre }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-edit"></i> Producto:</strong>
+                            <p align="justify">
+                                {{ object.producto.nombre }}
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fa-edit"></i> Descripcion:</strong>
+                            <p>
+                                {{ object.producto.descripcion }}
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fas fa-building margin-r-5"></i> Marca:</strong>
+                            <p>
+                                {{ object.producto.marca }} ({{ object.producto.marca.descripcion }})
+                            </p>
+                            <hr>
+
+                            <strong><i class="fas fa-check-square"></i> Estado:</strong>
+                            <p>
+                                {% if object.estado == True %}
+                                    <span class="badge badge-success ">Activo</span>
+                                {% else %}
+                                    <span class="badge badge-warning ">Bloqueado</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("#id_marca").show();
+        $("#id_ubicacion").show();
+        $("#id_galeria").show();
+        $("#id_cuentas").show();
+    </script>
+{% endblock %}

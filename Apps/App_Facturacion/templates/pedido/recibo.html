@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    .img-invoice {
+        width: 300px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid #000000;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    #invoice th {
+        background-color: grey;
+        color: white;
+    }
+</style>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th align="left">
+            <img src="{{ icon }}" class="img-invoice" height="90px">
+        </th>
+    </tr>
+    <tr>
+
+    </tr>
+    <tr>
+        <th align="left" style="width: 60%;">
+             <p >
+                {{ comp.name|upper }}<br>
+                Ruc: {{ comp.ruc }} - Telf: {{ comp.telefono }}<br>
+                {{ comp.address|upper }}<br>
+                {{ comp.ubicacion }}<br>
+                Email: {{ comp.correo }}<br>
+            </p>
+        </th>
+        <th align="left" style="width: 40%;">
+            <b>PEDIDO-FACTURA:</b> {{ venta.id }}<br>
+            <b>FECHA DE VENTA:</b> {{ venta.fecha }}<br>
+            <b>CLIENTE:</b> {{ venta.cliente|upper }}<br>
+            <b>DNI:</b> {{ venta.cliente.c_i }}<br>
+            <b>ESTADO:</b>{{ estado }}<br>
+            <b>ESTADO-PEDIDO:</b>{{ estado_pedido }}<br>
+        </th>
+    </tr>
+    <tr>
+        <th align="left"><b>DIRECCION DE ENVIO:</b> {{ pedido.direccion }} - {{ pedido.descripcion }}</th>
+    </tr>
+    <tr>
+        <th align="left"><b>FECHA DE ENTREGA:</b>  {{ pedido.fecha_entrega }}</th>
+    </tr>
+    </thead>
+</table>
+<table id="invoice">
+    <thead>
+    <tr>
+        <th style="width: 20%;">CANTIDAD</th>
+        <th style="width: 40%;">DESCRIPCION</th>
+        <th style="width: 15%;">P.UNITARIO</th>
+        <th style="width: 10%;">DESCUENTO</th>
+        <th></th>
+        <th style="width: 15%; text-align: right ">TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for d in venta.detalle_venta_set.all %}
+        <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+            <td style="text-align: left">{{ d.cantidad }}</td>
+            <td>{{ d.inventario.producto.nombre }} - {{ d.inventario.producto.marca.nombre }}- {{ d.inventario.medida }}</td>
+            <td >${{ d.precio }}</td>
+            <td>${{ d.descuento }}</td>
+            <td></td>
+            <td style="text-align: right;">${{ d.total }}</td>
+        </tr>
+    {% endfor %}
+    <tr style="border-top: 1px solid black; padding-top: 4px;">
+        <td colspan="5"><b>SUBTOTAL</b></td>
+        <td style="text-align: right">${{ venta.subtotal }}</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5"><b>IVA {{ venta.iva_base }}%</b></td>
+        <td style="text-align: right">${{ venta.iva }}</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5"><b>TOTAL DE FACTURA</b></td>
+        <td style="text-align: right">${{ venta.total }}</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5"><b>TOTAL DE ENVIO</b></td>
+        <td style="text-align: right">${{ pedido.total }}</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5"><b>TOTAL A PAGAR</b></td>
+        <td style="text-align: right">${{ total }}</td>
+    </tr>
+    </tbody>
+</table>
+<table style="margin-top: 250px;">
+    <thead>
+    <tr>
+        <th>****GRACIAS POR SU CONFIANZA****</th>
+    </tr>
+    <tr>
+        <th>FERRETERIA EL CONSTRUCTOR</th>
+    </tr>
+    </thead>
+</table>
+</body>
+</html>

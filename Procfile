@@ -1,0 +1,1 @@
+web: gunicorn Pry_Web.wsgi --log-file -

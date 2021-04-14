@@ -1,0 +1,231 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_list %}
+    <link rel="stylesheet" href="{% static 'producto/css/list.css' %}"/>
+    <script src="{% static 'producto/js/list.js' %}"></script>
+    <link href="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
+
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width:5%">Nº</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col">PVP</th>
+        <th scope="col">Marca</th>
+        <th scope="col">Ubicación</th>
+        <th scope="col">Stock</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Imagen</th>
+        <th scope="col">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+{% endblock %}
+
+{% block buttons_list %}
+
+    <div class="card-footer">
+
+        <div class="row">
+             <div class="col-lg-4">
+                <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+                    <i class="fas fa-plus"></i> Nuevo registro
+                </a>
+                <a href="{{ list_url }}" class="btn btn-success btn-flat">
+                    <i class="fas fa-sync"></i> Actualizar
+                </a>
+            </div>
+            <div class="col-lg-4">
+
+            </div>
+            <div class="col-lg-4" align="right">
+                <a href="{{ list_inventario_url }}" class="btn btn-flat" style="color: white; background: #38c20a">
+                    <i class="fas fa-clipboard-list"></i> Inventario
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModalProducto" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" action="." enctype="multipart/form-data">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <b><i class="fas fa-search"></i> <span></span></b>
+                        </h5>
+                        <button type="button" class="close cerrarModal" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid contenedor_img">
+                            <div class="primera-columna">
+                                <input name="action" type="hidden" value="add">
+                                <input name="id" id="id" type="hidden" value="0">
+                                <div class="form-group">
+                                        <label for="email">{{ form.nombre.label }}:</label>
+                                        {{ form.nombre|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <div class="form-group">
+                                        <label for="email">{{ form.marca.label }}:</label>
+                                        {{ form.marca }}
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-6">
+                                        <label for="email">{{ form.precio.label }}:</label>
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">$</div>
+                                            </div>
+                                            {{ form.precio|add_class:'form-control'|attr:'autocomplete:off'|attr:' readonly:readonly' }}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label for="email" >Utilidad:</label>
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">$</div>
+                                            </div>
+                                            <input type="number" name="utilidad" value="0.00" step="0.01" readonly="readonly" class="form-control" id="id_utilidad">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-6">
+                                        <label for="email" >Precio IVA:</label>
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">$</div>
+                                            </div>
+                                            <input type="number" name="precio_iva" value="0.00" step="0.01" readonly="readonly" class="form-control" id="id_precio_iva">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label for="email">{{ form.iva.label }}:</label>
+                                        {{ form.iva|add_class:'form-control'|attr:'autocomplete:off'|attr:' readonly:readonly' }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.porcentaje_ganancia.label }}:</label>
+                                    {{ form.porcentaje_ganancia|add_class:'form-control'|attr:'autocomplete:off'}}
+                                </div>
+                                <div class="form-group">
+                                        <label for="email">{{ form.precio_bruto.label }}:</label>
+                                        {{ form.precio_bruto|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <div class="form-group">
+                                        <label for="email">{{ form.estado.label }}:</label>
+                                        {{ form.estado|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                            </div>
+                            <div class="segunda-columna">
+                                <div class="form-group">
+                                    <label for="email">{{ form.descripcion.label }}:</label>
+                                    {{ form.descripcion|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <fieldset id="agrupacion_select">
+                                    <h4></h4><h5><b>Ubicación.-</b></h5>
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label for="email">{{ form.bloque.label }}:</label>
+                                            {{ form.bloque }}
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label for="email">{{ form.seccion.label }}:</label>
+                                            {{ form.seccion }}
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label for="email">{{ form.posicion.label }}:</label>
+                                            {{ form.posicion }}
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div class="form-group">
+                                    <label for="email">{{ form.stock_minimo.label }}:</label>
+                                    {{ form.stock_minimo|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.stock.label }}:</label>
+                                    {{ form.stock|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.imagen.label }}:</label>
+                                    {{ form.imagen }}
+                                    <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
+                                </div>
+                                <div class="box box-primary contenedorimg2" id="visorArchivo" align="center">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $("#id_cuentas").show();
+        $("#id_marca").show();
+        $("#id_ubicacion").show();
+        $("#id_galeria").show();
+        $('#myModalProducto').on('shown.bs.modal', function () {
+            $('#id_nombre').focus()
+        });
+        iva = {{ iva_base|safe }}
+        $("input[name='iva']").val({{ iva_base|safe }})
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

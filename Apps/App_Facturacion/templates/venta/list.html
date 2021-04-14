@@ -1,0 +1,166 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block head_list %}
+    <script src="{% static 'venta/js/list.js' %}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
+
+    <script src="{% static 'lib/moment-2.25.3/moment-with-locales.js' %}"></script>
+    <script src="{% static 'lib/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.js' %}"></script>
+    <link href="{% static 'lib/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css' %}" rel="stylesheet"/>
+    {{ form.media }}
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        {#        <th scope="col">Items</th>#}
+        <th scope="col" style="width: 5%">Nª</th>
+        <th scope="col" style="width: 15%">Cliente</th>
+        <th scope="col" style="width: 15%">Fecha de registro</th>
+        <th scope="col" style="width: 15%">Total</th>
+        <th scope="col" style="width: 15%">Estado</th>
+        <th scope="col" style="width: 15%">T-Documento</th>
+        <th scope="col" style="width: 15%" align="right">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+{% endblock %}
+{% block buttons_list %}
+    <div class="card-footer">
+
+        <a href="{{ create_url }}" class="btn btn-primary btn-sm btnTest">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-sm">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+        <div class="float-right">
+            <a href="{{ pedido_url }}" class="btn btn-warning btn-sm ">
+                <i class="fas fa-list"></i> Pedidos
+            </a>
+            <a href="{{ proforma_url }}" class="btn btn-success btn-sm ">
+                <i class="fas fa-list"></i> Proforma
+            </a>
+        </div>
+
+
+    </div>
+{% endblock %}
+
+
+{% block javascript %}
+    <div class="modal fade" id="myModelDet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><b><i class="fas fa-shopping-cart"></i> Consulta de
+                        detalle de productos</b></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered" id="tblDet">
+                        <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Medida</th>
+                            <th>PVP</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModalPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" action="." enctype="multipart/form-data">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <b><i class="fas fa-search"></i> <span></span></b>
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <input name="action" type="hidden" value="add">
+                            <input name="id" id="id" type="hidden" value="0">
+                            <label>N° Factura: </label><span class="bg bg-success btn-xs" id="span_venta"></span>
+                            {{ form.venta }}
+                            <div class="form-group">
+                                <label>Fecha de Entrega:</label>
+                                {{ form.fecha_entrega }}
+                            </div>
+                            <div class="form-group">
+                                <label>Total del Pedido:</label>
+                                {{ form.total }}
+                            </div>
+                            <div class="form-group">
+                                <label>Dirección:</label>
+                                {{ form.direccion }}
+                            </div>
+                            <div class="form-group">
+                                <label>Descripción:</label>
+                                {{ form.descripcion }}
+                            </div>
+                            <div class="form-group">
+                                <label>Link Ubicacion:</label>
+                                <div class="input-group margin btn-group">
+                                    {{ form.ubicacion_link }}
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary " href="javascript:ventanaSecundaria('https://www.google.com.ec/maps')">
+                                            <i class="fa fa-map-marker-alt margin-r-5"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Iframe Ubicacion:</label>
+                                <div class="input-group margin btn-group">
+                                    {{ form.ubicacion }}
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary " href="javascript:ventanaSecundaria('https://www.google.com.ec/maps')">
+                                            <i class="fa fa-map-marker-alt margin-r-5"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+
+        function ventanaSecundaria(URL) {
+            window.open(URL, 'Mapa', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=1000,height=800,left = 30,top = 30');
+        }
+
+        $("#id_cuentas").show();
+    </script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'App_Facturacion/form.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_list %}
+    <link rel="stylesheet" href="{% static 'empresa/css/show.css' %}"/>
+    <script src="{% static 'empresa/js/show.js' %}"></script>
+    <link href="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="." enctype="multipart/form-data">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-edit"></i>
+                    {{ title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="{{ action }}">
+                <input type="hidden" name="id" value="0">
+                <div class="row">
+                     <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.nombre.label }}:</label>
+                            {{ form.nombre }}
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.ruc.label }}:</label>
+                            {{ form.ruc }}
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="form-group">
+                            <label for="email">{{ form.telefono.label }}:</label>
+                            {{ form.telefono }}
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="form-group">
+                            <label for="email">{{ form.iva.label }}:</label>
+                            {{ form.iva }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.correo.label }}:</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">@</div>
+                                </div>
+                                {{ form.correo }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.ciudad.label }}:</label>
+                            {{ form.ciudad }}
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.direccion.label }}:</label>
+                            {{ form.direccion }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.imagen.label }}:</label>
+                            {{ form.imagen|attr:'onchange:return validarInputFile()' }}
+                            <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.logo_login.label }}:</label>
+                            {{ form.logo_login|attr:'onchange:return validarInputFile_logo()' }}
+                            <input type="button" value="Subir Imagen" class="btn_img_logo form-control" id="btn_id_logo">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="email">{{ form.sitio_web.label }}:</label>
+                            {{ form.sitio_web }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="box box-primary contenedorimg2" id="visorArchivo">
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="box box-primary contenedorimg2_logo" id="visorArchivo_logo">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-flat">
+                    <i class="fas fa-save"></i> Guardar registro
+                </button>
+                <a href="{{ list_url }}" class="btn btn-danger btn-flat">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        $("#id_productos").hide();
+        $("#id_venta").hide();
+        $("#id_cuentas").hide();
+        $("#id_proveedor").show();
+        $("#id_empresa").show();
+        $("#id_usuario_user").show();
+        document.getElementById('empresa_text').innerHTML =
+        '<h3>Empresa</h3>'
+    </script>
+{% endblock %}

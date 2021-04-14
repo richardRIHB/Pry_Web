@@ -1,0 +1,341 @@
+{% extends 'App_Facturacion/Base/home.html' %}
+
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block body %}
+    <body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        <!-- Header -->
+        {% include 'App_Facturacion/Base/header.html' %}
+
+        <!-- sidebar -->
+
+        <!-- Content -->
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark"> Bienvenido - {{ request.user.first_name }} &nbsp {{ request.user.last_name }}</h1>
+
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 col-7" id="id_clientes">
+                            <!-- small box -->
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3>Clientes</h3>
+
+                                    <h4>{{ count_cliente }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person-add"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:cliente_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_productos">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>Productos</h3>
+
+                                    <h4>{{ count_producto }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:producto_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_venta">
+                            <!-- small box -->
+                            <div class="small-box bg-blue">
+                                <div class="inner">
+                                    <h3>Facturación</h3>
+
+                                    <h4>{{ count_venta }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-print"></i>
+
+                                </div>
+                                <a href="{% url 'App_Facturacion:venta_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_report" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-orange">
+                                <div class="inner" id="id_report_text">
+                                    <h3>Reportes</h3>
+                                    <h4>5</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <a href="{% url 'reports:venta_report' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_report_compra" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-orange">
+                                <div class="inner">
+                                    <h3>Rep Compras</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <a href="{% url 'reports:compra_report' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_report_producto" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-orange">
+                                <div class="inner">
+                                    <h3>Rep Productos</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <a href="{% url 'reports:producto_report' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_report_inventario" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-orange">
+                                <div class="inner">
+                                    <h3>Rep Inventario</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <a href="{% url 'reports:inventario_report' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_cuentas" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-red">
+                                <div class="inner">
+                                    <h3>Cuentas</h3>
+                                    <h4>{{ count_venta }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:cuentas_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_marca" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h5>Marcas &nbsp<span class="badge badge-warning sorting">{{ count_marca }}</span></h5>
+                                </div>
+                                <div class="icon" >
+                                    <i class="fas fa-building fa-lg" ></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:marca_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_ubicacion" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h5>Ubicación &nbsp<span class="badge badge-warning sorting">{{ count_ubicacion }}</span></h5>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-map-marker-alt fa-lg"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:ubicacion_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_galeria" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h5>Galerías &nbsp<span class="badge badge-warning sorting">{{ count_galeria }}</span></h5>
+                                </div>
+                                <div class="icon">
+                                    <i class="far fa-images fa-lg"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:galeria_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_proveedor" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-purple ">
+                                <div class="inner">
+                                    <h3>Proveedor</h3>
+
+                                    <h4>{{ count_proveedor }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person-add"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:proveedor_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_compra" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-cyan">
+                                <div class="inner">
+                                    <h3>Compras </h3>
+
+                                    <h4>{{ count_compra }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-print"></i>
+
+                                </div>
+                                <a href="{% url 'App_Facturacion:compra_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_proforma_compra" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-blue">
+                                <div class="inner" id="id_proforma_compra_text">
+                                    <h3>Proforma de </h3>
+                                    <h4><B>COMPRAS  </B> {{ count_proforma_compra }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:proforma_compra_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_devolucion_compra" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-gray">
+                                <div class="inner">
+                                    <h3>Devolución</h3>
+                                    <h4>{{ count_devolucion_compra }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:devolucion_compra_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-7" id="id_cuentas_compra" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box bg-red">
+                                <div class="inner">
+                                    <h3>Cuentas</h3>
+                                    <h4>{{ count_cuentas_compra }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:cuentas_compra_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        {% if user.is_staff and user.is_active %}
+                            <div class="col-lg-3 col-7" id="id_usuario_user" style="display:none">
+                                <!-- small box -->
+                                <div class="small-box bg-navy">
+                                    <div class="inner">
+                                        <h3>Usuarios</h3>
+                                        <h4>{{ count_usuario }}</h4>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-person-add"></i>
+                                    </div>
+                                    <a href="{% url 'user:usuario_list' %}" class="small-box-footer"
+                                       id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-7" id="id_empresa" style="display:none">
+                                <!-- small box -->
+                                <div class="small-box bg-dark">
+                                    <div class="inner" id="empresa_text">
+                                        <h3>Empresa</h3>
+                                        <h4>1</h4>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <a href="{% url 'App_Facturacion:empresa' %}" class="small-box-footer"
+                                       id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-7" id="id_inventario" style="display:none">
+                                <!-- small box -->
+                                <div class="small-box" style="background:#38c20a">
+                                    <div class="inner">
+                                        <h3>Inventario</h3>
+                                        <h4>{{ count_inventario }}</h4>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-clipboard-list"></i>
+                                    </div>
+                                    <a href="{% url 'App_Facturacion:inventario_list' %}" class="small-box-footer"
+                                       id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+            <div class="content">
+                <div class="container">
+                    {% block content %}
+
+                    {% endblock %}
+
+                    {% block content2 %}
+
+                    {% endblock %}
+
+                    {% block content3 %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        {% include 'App_Facturacion/Base/footer.html' %}
+    </div>
+    <!-- Block javascript -->
+    {% block javascript %}
+
+    {% endblock %}
+    <script>
+        {% if messages %}
+            var html = '<p>';
+            {% for message in messages %}
+                html += '{{ message }}<br>';
+            {% endfor %}
+            html += '</p>';
+            Swal.fire({
+                title: 'Error!',
+                html: html,
+                icon: 'error'
+            });
+        {% endif %}
+    </script>
+    </body>
+{% endblock %}

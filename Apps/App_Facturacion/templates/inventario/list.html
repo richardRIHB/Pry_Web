@@ -1,0 +1,194 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_list %}
+    <link rel="stylesheet" href="{% static 'inventario/css/list.css' %}"/>
+    <script src="{% static 'inventario/js/list.js' %}"></script>
+    <link href="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
+
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width:8%">Prod_Nº</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col">Unidad Medida</th>
+        <th scope="col">PVP</th>
+        <th scope="col">PVP Medida</th>
+        <th scope="col">% Conversion</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+{% endblock %}
+
+{% block buttons_list %}
+
+    <div class="card-footer">
+
+        <div class="row">
+             <div class="col-lg-4">
+                <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+                    <i class="fas fa-plus"></i> Nuevo registro
+                </a>
+                <a href="{{ list_url }}" class="btn btn-success btn-flat">
+                    <i class="fas fa-sync"></i> Actualizar
+                </a>
+            </div>
+            <div class="col-lg-4">
+
+            </div>
+            <div class="col-lg-4" align="right">
+                <a href="{{ list_producto_url }}" class="btn bg-success btn-flat" style="color: white;">
+                    <i class="fas fa-lightbulb"></i> Producto
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModalInventario" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" action="." enctype="multipart/form-data">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <b><i class="fas fa-search"></i> <span></span></b>
+                        </h5>
+                        <button type="button" class="close cerrarModal" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid contenedor_img">
+                            <input name="action" type="hidden" value="add">
+                            <input name="id" id="id" type="hidden" value="0">
+                            <div class="form-group">
+                                    <label for="email">{{ form.producto.label }}:</label>
+                                    {{ form.producto }}
+                            </div>
+                            <div class="primera-columna">
+                                <div class="form-group">
+                                        <label for="email">{{ form.medida.label }}:</label>
+                                        {{ form.medida|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">PVP:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">$</div>
+                                        </div>
+                                    <input type="number" name="pvp" value="0.00" step="0.01" readonly="readonly" class="form-control" onchange="return calcularPVP()" id="id_pvp">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.tipo_conversion.label }}:</label>
+                                    <select name="tipo_conversion" class="form-control select22" style="width: 100%" id="id_tipo_conversion">
+                                    <option value="True">Mayor o igual</option>
+                                    <option value="False">Menor</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                        <label for="email">{{ form.estado.label }}:</label>
+                                        {{ form.estado|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                            </div>
+                            <div class="segunda-columna">
+                                <div class="form-group">
+                                    <label for="email">{{ form.equivalencia.label }}:</label>
+                                    {{ form.equivalencia|add_class:'form-control'|attr:'autocomplete:off'}}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.pvp_medida.label }}:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">$</div>
+                                        </div>
+                                        {{ form.pvp_medida|add_class:'form-control'|attr:'autocomplete:off' }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                        <label for="email">{{ form.porcentaje_conversion.label }}:</label>
+                                        {{ form.porcentaje_conversion|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.conversion_stock.label }}:</label>
+                                    {{ form.conversion_stock|add_class:'form-control'|attr:'autocomplete:off' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $("#id_productos").hide();
+        $("#id_marca").hide();
+        $("#id_ubicacion").hide();
+        $("#id_galeria").hide();
+        $("#id_inventario").show();
+        $("#id_cuentas").show();
+        $('#myModalInventario').on('shown.bs.modal', function () {
+            $('#id_producto').focus()
+        });
+        $(function () {
+            $('.select22').select2({
+                theme: "bootstrap4",
+                language: 'es',
+                placeholder: "Seleccione...",
+                width: '100%',
+            })
+        })
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

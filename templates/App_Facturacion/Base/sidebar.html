@@ -1,0 +1,48 @@
+{% load static %}
+
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar" style="height: auto;">
+        <!-- Sidebar user panel -->
+
+        <div class="user-panel">
+            <iframe  src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=es&size=small&timezone=America%2FGuayaquil"
+                    width="100%" height="auto" frameborder="0" seamless></iframe>
+        </div>
+        <ul class="sidebar-menu -tree">
+            <li>
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>Clientes</h3>
+
+                        <h4>450</h4>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="{% url 'App_Facturacion:cliente_list' %}" class="small-box-footer"
+                       id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </li>
+
+            <li class="header">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>Productos</h3>
+
+                        <h4>450</h4>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <a href="{% url 'App_Facturacion:producto_list' %}" class="small-box-footer"
+                       id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </li>
+        </ul>
+
+
+    </section>
+    <!-- /.sidebar -->
+</aside>

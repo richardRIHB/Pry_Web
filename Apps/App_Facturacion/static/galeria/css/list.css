@@ -1,0 +1,14 @@
+#id_ruta {
+    display: none;
+}
+
+.contenedorimg2{
+    margin: 10px auto 0 auto;
+}
+.contenedorimg2 img {
+
+    border-radius: 1px;
+    box-shadow: 0px 3px 6px;
+    rgba(0, 0, 0, 0, 0.5);
+}
+

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    .img-invoice {
+        width: 300px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    #invoice th{
+        background-color: grey;
+        color: white;
+    }
+</style>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th align="left" >
+            <img src="{{ icon }}" class="img-invoice" height="90px">
+        </th>
+    </tr>
+    <tr>
+
+    </tr>
+    <tr>
+        <th align="left"  style="width: 64%;">
+            <p>
+                {{ comp.name|upper }}<br>
+                Ruc: {{ comp.ruc }} - Telf: {{ comp.telefono }}<br>
+                {{ comp.address|upper }}<br>
+                {{ comp.ubicacion }}<br>
+                Email: {{ comp.correo }}<br>
+            </p>
+        </th>
+        <th align="left" style="width: 36%;" >
+            <b>PROVEEDOR:</b> {{ proveedor.proveedor|upper }}<br>
+            <b>EMPRESA:</b> {{ proveedor.empresa }}<br>
+            <b>FECHA:</b> {{ proveedor.fecha }}<br>
+            <b>TIPO DE REPORTE:</b> {{ proveedor.reporte }}<br>
+        </th>
+    </tr>
+    </thead>
+</table>
+<table id="invoice">
+    <thead>
+    <tr>
+        <th style="width: 12%;">Factura Nº</th>
+        <th style="width: 30%;">PROVEEDOR</th>
+        <th style="width: 28%;">FECHA DE REGISTRO</th>
+        <th style="width: 15%; text-align: center;">VALOR</th>
+        <th style="width: 15%; text-align: center;">SALDO</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for p in productos %}
+        <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+            <td class="text-center">{{ p.0 }}</td>
+            <td>{{ p.1 }}</td>
+            <td>{{ p.2 }}</td>
+            <td style="text-align: center;">{{ p.3 }}</td>
+            <td style="text-align: center;">{{ p.4 }}</td>
+        </tr>
+    {% endfor %}
+    {% for s in sumFinal %}
+        <tr style="border-top: 1px solid black; padding-top: 4px;">
+            <td colspan="2"><b>TOTAL</b></td>
+            <td>{{ s.2 }}</td>
+            <td style="text-align: center;">${{ s.3 }}</td>
+            <td style="text-align: center;">${{ s.4 }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<table style="margin-top: 250px;">
+    <thead>
+    <tr>
+        <th>****GRACIAS POR SU CONFIANZA****</th>
+    </tr>
+    <tr>
+        <th>EL CONSTRUCTOR</th>
+    </tr>
+    </thead>
+</table>
+</body>
+</html>

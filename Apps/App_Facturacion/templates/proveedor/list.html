@@ -1,0 +1,174 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_list %}
+    <link rel="stylesheet" href="{% static 'proveedor/css/list.css' %}"/>
+    <script src="{% static 'proveedor/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width: 5%">Nº</th>
+        <th scope="col">Proveedor</th>
+        <th scope="col">Ciudad</th>
+        <th scope="col">Empresa</th>
+        <th scope="col">Ruc</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Logotipo</th>
+        <th scope="col">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+{% endblock %}
+{% block buttons_list %}
+    <div class="card-footer">
+
+        <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <!-- Modal -->
+    <div class="modal fade" id="myModalProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" action="." enctype="multipart/form-data">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <b><i class="fas fa-search"></i> <span></span></b>
+                        </h5>
+                        <button type="button" class="close cerrarModal" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid contenedor_img">
+                            <div class="primera-columna">
+                                <input name="action" type="hidden" value="add">
+                                <input name="id" id="id" type="hidden" value="0">
+                                <div class="form-group">
+                                    <label for="email">{{ form.nombre.label }}:</label>
+                                    {{ form.nombre }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.apellido.label }}:</label>
+                                    {{ form.apellido }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.c_i.label }}:</label>
+                                    {{ form.c_i }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.celular.label }}:</label>
+                                    {{ form.celular }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.correo.label }}:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">@</div>
+                                        </div>
+                                        {{ form.correo }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.estado.label }}:</label>
+                                    {{ form.estado }}
+                                </div>
+                            </div>
+                            <div class="segunda-columna">
+                                <div class="form-group">
+                                    <label for="email">{{ form.empresa.label }}:</label>
+                                    {{ form.empresa }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.ruc.label }}:</label>
+                                    {{ form.ruc }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.direccion.label }}:</label>
+                                    {{ form.direccion }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.ciudad.label }}:</label>
+                                    {{ form.ciudad }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">{{ form.imagen.label }}:</label>
+                                    {{ form.imagen|attr:'onchange:return validarInputFile()' }}
+                                    <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
+                                </div>
+                                <div class="box box-primary contenedorimg2" id="visorArchivo" align="center">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $('#myModalProveedor').on('shown.bs.modal', function () {
+            $('#id_nombre').focus()
+        });
+        $("#id_clientes").hide();
+        $("#id_productos").hide();
+        $("#id_venta").hide();
+        $("#id_cuentas").hide();
+        $("#id_proveedor").show();
+        $("#id_compra").show();
+        $("#id_devolucion_compra").show();
+        $("#id_cuentas_compra").show();
+
+    </script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

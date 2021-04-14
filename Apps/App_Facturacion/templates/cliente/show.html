@@ -1,0 +1,96 @@
+{% extends 'App_Facturacion/layout.html' %} }}
+
+{% load static %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-search"></i>
+                {{ title }} / {{ date_now }}
+            </h3>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box box-primary">
+                        {% if object.ubicacion  %}
+                            <iframe src="{{ object.ubicacion }}"
+                                    width="100%" height="655" frameborder="0" style="border:0;" allowfullscreen=""
+                                    aria-hidden="false" tabindex="0"></iframe>
+                        {% else %}
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63792.55165627999!2d-79.62627337754512!3d-2.1404673276457906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x902d47b1ac773e79%3A0xca6e788c9cf5a035!2sMilagro!5e0!3m2!1ses-419!2sec!4v1612050902311!5m2!1ses-419!2sec"
+                                    width="100%" height="655" frameborder="0" style="border:0;" allowfullscreen=""
+                                    aria-hidden="false" tabindex="0">
+                            </iframe>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box box-primary">
+
+                        <div class="box-header with-border">
+                            <h3 class="title">Acerca de: {{ object }}</h3>
+                        </div>
+
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <strong><i class="fas fa-edit"></i> Ruc:</strong>
+                            <p class="text-muted">&nbsp;{{ object.ruc }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-user-tag"></i> Cedula de Identidad:</strong>
+                            <p class="text-muted">&nbsp;{{ object.c_i }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-check-double"></i> Ciudad:</strong>
+                            <p class="text-muted">&nbsp;{{ object.ciudad }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-house-user"></i> Direccion:</strong>
+                            <p class="text-muted">&nbsp;{{ object.direccion }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-map-marker-alt margin-r-5"></i> Ubicacion:</strong>
+                            {% if object.ubicacion_link %}
+                                <p class="text-muted"><a target="_blank" href="{{ object.ubicacion_link }}">{{ object.ubicacion_link }}</a></p>
+                            {% else %}
+                                <p class="text-muted"><a target="_blank" href="#">No registrado</a></p>
+                            {% endif %}
+                            <hr>
+
+                            <strong><i class="fas fa-mobile"></i> Celular:</strong>
+                            <p class="text-muted">&nbsp;{{ object.celular }}</p>
+                            <hr>
+
+                            <strong><i class="fas fa-envelope"></i> Correo:</strong>
+                            <p class="text-muted">&nbsp;{{ object.correo }}</p>
+                            <hr>
+
+                            <strong><i class="fa fa-user-check"></i> Estado:</strong>
+                            <p>
+                                {% if object.estado == True %}
+                                    <span class="badge badge-success ">Activo</span>
+                                {% else %}
+                                    <span class="badge badge-warning ">Bloqueado</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

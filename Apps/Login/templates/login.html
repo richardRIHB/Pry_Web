@@ -1,0 +1,121 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Colorlib Templates">
+    <meta name="author" content="Colorlib">
+    <meta name="keywords" content="Colorlib Templates">
+
+    <!-- Title Page-->
+    <title>{{ title}}</title>
+
+    <!-- Icons font CSS-->
+    <link href="{% static 'lib/login/vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'lib/login/vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="{% static 'lib/login/vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'lib/login/vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'lib/login/css/main.css' %}" rel="stylesheet" media="all">
+
+    <style>
+        .card-3 .card-heading {
+            background: url(http://127.0.0.1:8000{{ logo_l }}) top left/cover no-repeat;
+            display: table-cell;
+            width: 50%;
+        }
+    </style>
+
+    <!-- Sweetalert2 -->
+    <script src="{% static 'lib/sweetalert2/sweetalert2.all.min.js' %}"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'lib/adminlte/plugins/fontawesome-free/css/all.min.css' %}">
+
+</head>
+
+<body>
+    <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                <div class="card-heading">
+                    <div class="card-body">
+                         <a  href="{% url 'index' %}"  class="title"  style="text-decoration-line: none">
+                            <i class="fab fa-chrome title"></i> Sitio Web
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h2 class="title " >INICIO DE SESIÓN</h2>
+
+                    <form class="title" action="." method="post">
+                        <input type="hidden" name="next" value="{{ next }}">
+                        {% csrf_token %}
+                        <div class="input-group ">
+                             <span class="fas fa-user"></span>
+                            {{ form.username|add_class:'input--style-3 form-control'|attr:''|attr:'autocomplete:off'|attr:'placeholder:Ingrese su Usuario' }}
+                        </div>
+                        <div class="input-group ">
+                            <span class="fas fa-lock"></span>
+                            {{ form.password|add_class:'input--style-3'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su Contraseña' }}
+                        </div>
+                        <div class="p-t-10">
+                            <button class="btn btn--pill btn--green" type="submit">
+                                <i class="fas fa-sign-in-alt"></i>&nbsp; INICIAR SESIÓN
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="card-footer">
+
+                </div>
+
+            </div>
+        </div>
+        <script type="application/javascript">
+            {% if form.errors %}
+                var errors = '';
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        errors += '{{ error }}\n';
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    errors += '{{ error }}\n';
+                {% endfor %}
+                Swal.fire({
+                    title: 'Error!',
+                    text: errors,
+                    icon: 'error'
+                });
+            {% endif %}
+        </script>
+
+    </div>
+
+    <!-- Jquery JS-->
+    <script src="{%  static 'lib/login/vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'lib/login/vendor/select2/select2.min.js' %}v"></script>
+    <script src="{% static 'lib/login/vendor/datepicker/moment.min.js' %}"></script>
+    <script src="{% static 'lib/login/vendor/datepicker/daterangepicker.js' %}"></script>
+
+    <!-- Main JS-->
+    <script src="{% static 'lib/login/js/global.js' %}"></script>
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
+</html>
+<!-- end document-->

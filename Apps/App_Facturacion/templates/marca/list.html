@@ -1,0 +1,84 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_list %}
+    <script src="{% static 'marca/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width: 10%">Nº</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+
+{% endblock %}
+
+{% block buttons_list %}
+    <div class="card-footer">
+
+        <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <!-- Modal -->
+    <div class="modal fade" id="myModalMarca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" action="." enctype="multipart/form-data">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <b><i class="fas fa-search"></i> <span></span></b>
+                        </h5>
+                        <button type="button" class="close cerrarModal" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <input name="action" type="hidden" value="add">
+                            <input name="id" id="id" type="hidden" value="0">
+                            {% for field in form.visible_fields %}
+                                <div class="form-group">
+                                    <label for="email">{{ field.label }}:</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $('#myModalMarca').on('shown.bs.modal', function () {
+            $('#id_nombre').focus()
+        });
+        $("#id_marca").show();
+        $("#id_ubicacion").show();
+        $("#id_galeria").show();
+        $("#id_cuentas").show();
+
+    </script>
+{% endblock %}
