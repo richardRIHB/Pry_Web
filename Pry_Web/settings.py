@@ -147,4 +147,4 @@ MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'User.User'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
