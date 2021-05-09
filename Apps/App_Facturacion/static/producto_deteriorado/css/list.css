@@ -1,0 +1,10 @@
+
+.primera-columna {
+  width: 48%;
+  float: left;
+}
+
+.segunda-columna {
+  width: 48%;
+  float: right;
+}

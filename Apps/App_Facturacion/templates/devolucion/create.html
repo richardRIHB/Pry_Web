@@ -1,0 +1,157 @@
+{% extends 'App_Facturacion/list.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block head_list %}
+    <link href="{% static 'lib/jquery-ui/jquery-ui.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/jquery-ui/jquery-ui.min.js' %}"></script>
+
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/select2/css/select2-bootstrap4.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/i18n/es.js' %}"></script>
+
+    <script src="{% static 'lib/moment-2.25.3/moment-with-locales.js' %}"></script>
+    <script src="{% static 'lib/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.js' %}"></script>
+    <link href="{% static 'lib/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css' %}" rel="stylesheet"/>
+
+    <link href="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
+
+    <script src="{% static 'devolucion/js/form.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <div class="card card-blue">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if action == 'add' %}
+                        <i class="fas fa-plus"></i>
+                    {% else %}
+                        <i class="fas fa-edit"></i>
+                    {% endif %}
+                    {{ title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-boxes"></i> Detalle de productos</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Buscador de Facturas:</label>
+                                    <div class="input-group">
+                                        <select class="form-control select2" style="width: 100%;" name="search">
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr>
+                                <table class="table table-bordered" id="tblProducts">
+                                    <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>PVP</th>
+                                        <th>Desc</th>
+                                        <th>Cant</th>
+                                        <th>Cant_Ret</th>
+                                        <th>Subtotal</th>
+                                        <th>Retorno</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Datos de la Devolución de Venta</h3>
+                            </div>
+                            <div class="card-body">
+                                <input type="hidden" name="action" value="{{ action }}">
+                                <div class="form-group">
+                                    <label>Fecha de Devolucion:</label>
+                                    {{ form.fecha }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Factura de Venta Nº</label>
+                                    <div class="input-group">
+                                        {{ form.venta| attr:'placeholder:Factura Nº...' }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Cliente:</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" readonly name="cliente_text" placeholder="Cliente...">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Subtotal:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">$</div>
+                                        </div>
+                                        {{ form.subtotal }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>IVA:</label>
+                                    <div class="input-group mb-2">
+                                        {{ form.iva }}
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>IVA Calculado:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">$</div>
+                                        </div>
+                                        <input type="text" class="form-control" readonly name="ivacalc" value="0.00">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Total:</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">$</div>
+                                        </div>
+                                        {{ form.total }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    {{ form.tipo_documento }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-sm btnTest">
+                    <i class="fas fa-save"></i> Guardar registro
+                </button>
+                <a href="{{ list_url }}" class="btn btn-danger btn-sm btnTest">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        vents.list();
+        $("#id_cuentas").show();
+    </script>
+
+{% endblock %}
