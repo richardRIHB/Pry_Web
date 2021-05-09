@@ -2,8 +2,7 @@ from django.urls import path
 
 from Apps.App_Facturacion.views.compra.views import CompraCreateView, compra_view, CompraUpdateView, CompraPdfView
 from Apps.App_Facturacion.views.cuentas_compra.views import cuentas_compra_list_view, cuentas_compra_pfd_view
-from Apps.App_Facturacion.views.devolucion.view import devolucion_create_view, devolucion_list_view, \
-    devolucion_factura_view
+from Apps.App_Facturacion.views.devolucion.views import devolucion_create_view, devolucion_list_view, devolucion_factura_view
 from Apps.App_Facturacion.views.devolucion_compra.views import devolucion_compra_list_view, devolucion_compra_create_view, devolucion_compra_pdf_view
 from Apps.App_Facturacion.views.empresa.views import empresa_view
 from Apps.App_Facturacion.views.galeria.views import galeria_view, galeria_show_view
