@@ -179,6 +179,8 @@ $(function () {
     $('.btnAdd').on('click', function () {
         $('input[name="action"]').val('add');
         modal_title.find('span').html('Creación de un Producto de Gestion Inventario');
+        $('input[name="cantidad"]').trigger("touchspin.updatesettings", {max: 10000});
+        $('input[name="cantidad"]').trigger("touchspin.updatesettings", {min: 1});
         $('form')[0].reset();
         $('select[name="tipo_problema"]').val('1').trigger('change');
         $('select[name="tipo_gestion"]').val('True').trigger('change');
@@ -218,6 +220,8 @@ $(function () {
             var data = tblGestion.row(tr.row).data();
             $('input[name="action"]').val('ver');
             $('input[name="id"]').val(data.id);
+            $('input[name="cantidad"]').trigger("touchspin.updatesettings", {max: data.cantidad});
+            $('input[name="cantidad"]').trigger("touchspin.updatesettings", {min: data.cantidad});
             // Establecer el valor, o creando una nueva opción si es necesario
             if ($('select[name="inventario"]').find("option[value='" + data.inventario.id + "']").length) {
                 $('select[name="inventario"]').val(data.inventario.id).trigger('change');
@@ -264,14 +268,14 @@ $(function () {
             $('#myModalGestion').modal('show');
         })
         .on('click', 'a[rel="delete"]', function () {
-            var tr = tblInventario.cell($(this).closest('td, li')).index();
-            var data = tblInventario.row(tr.row).data();
+            var tr = tblGestion.cell($(this).closest('td, li')).index();
+            var data = tblGestion.row(tr.row).data();
             var parameters = new FormData();
             parameters.append('action', 'delete');
             parameters.append('id', data.id);
-            submit_with_ajax(window.location.pathname, 'Notificación', '¿Estas seguro de eliminar el registro Nº '+'<span  class="badge badge-success" > '+ data.producto.id +'</span>'+ '<span  class="badge badge-primary" style="text-transform: uppercase;" > '+ data.producto.nombre+' '+ data.producto.marca.nombre +' '+ data.medida +'</span>' +'?', parameters, function () {
+            submit_with_ajax(window.location.pathname, 'Notificación', '¿Estas seguro de eliminar el registro Nº '+'<span  class="badge badge-success" > '+ data.inventario.producto.id +'</span>'+ '<span  class="badge badge-primary" style="text-transform: uppercase;" > '+ data.inventario.producto.nombre+' '+ data.inventario.producto.marca.nombre +' '+ data.inventario.medida +'</span>' +'?', parameters, function () {
                 $('form')[0].reset();
-                tblInventario.ajax.reload();
+                tblGestion.ajax.reload();
             });
         })
 

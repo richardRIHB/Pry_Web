@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 
 from Apps.App_Facturacion.forms import gestion_inventario_form
-from Apps.App_Facturacion.models import Inventario, Gestion_Inventario
+from Apps.App_Facturacion.models import Inventario, Gestion_Inventario, Producto
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -45,11 +45,30 @@ class gestion_inventario_list_view(LoginRequiredMixin, TemplateView):
                     gestion.tipo_gestion = request.POST['tipo_gestion']
                     gestion.estado = request.POST['estado_valor'].capitalize()
                     gestion.save()
+
+                    prod = Producto.objects.get(pk=gestion.inventario.producto.pk)
+                    stock_real = float(gestion.inventario.conversion_stock) * float(gestion.cantidad)
+                    if gestion.tipo_gestion == 'True':
+                        prod.stock = float(prod.stock) + float(stock_real)
+                    else:
+                        if (float(stock_real)) > float(prod.stock):
+                            raise Exception("Stock insuficiente: "+prod.nombre +' '+ prod.marca.nombre +' '+ gestion.inventario.medida)
+                        prod.stock = float(prod.stock) - float(stock_real)
+                    prod.save(update_fields=["stock"])
             elif action == 'delete':
                 with transaction.atomic():
-                    inv = Inventario.objects.get(pk=request.POST['id'])
-                    inv.estado = False
-                    inv.save()
+                    gestion= Gestion_Inventario.objects.get(pk=request.POST['id'])
+                    gestion.estado = False
+                    prod = Producto.objects.get(pk=gestion.inventario.producto.pk)
+                    stock_real = float(gestion.inventario.conversion_stock) * float(gestion.cantidad)
+                    if gestion.tipo_gestion:
+                        prod.stock = float(prod.stock) - float(stock_real)
+                    else:
+                        if (float(stock_real)) > float(prod.stock):
+                            raise Exception("Stock insuficiente: "+prod.nombre +' '+ prod.marca.nombre +' '+ gestion.inventario.medida)
+                        prod.stock = float(prod.stock) + float(stock_real)
+                    prod.save(update_fields=["stock"])
+                    gestion.save()
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:

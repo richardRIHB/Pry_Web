@@ -242,7 +242,6 @@ $(function () {
                 tblInventario.ajax.reload();
             });
         })
-
     $('form').on('submit', function (e) {
         e.preventDefault();
         var parameters = new FormData(this);
