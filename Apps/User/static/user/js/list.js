@@ -39,9 +39,9 @@ function get_data() {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<a href="#" rel="edit" title="Editar Usuario" class="btn btn-warning btn-xs btn-flat btnEdit"><i class="fas fa-edit"></i></a> ';
+                    var buttons = '<a href="#" rel="edit" title="Editar Usuario" class="btn btn-warning btn-xs btnEdit"><i class="fas fa-edit"></i></a> ';
                     if (row.is_active === true){
-                        buttons += '<a href="#" rel="delete" title="Eliminar Usuario" class="btn btn-danger btn-xs btn-flat btnDelete"><i class="fas fa-trash-alt"></i></a> ';
+                        buttons += '<a href="#" rel="delete" title="Eliminar Usuario" class="btn btn-danger btn-xs btnDelete"><i class="fas fa-trash-alt"></i></a> ';
                     }
                     return buttons
                 }

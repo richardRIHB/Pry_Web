@@ -73,6 +73,7 @@ class inventario_view(LoginRequiredMixin, TemplateView):
         context['title'] = 'Listado de Inventario'
         context['list_url'] = reverse_lazy('App_Facturacion:inventario_list')
         context['list_producto_url'] = reverse_lazy('App_Facturacion:producto_list')
+        context['list_gestion_inventario__url'] = reverse_lazy('App_Facturacion:gestion_inventario_list')
         context['entity'] = 'Inventario'
         context['date_now'] = datetime.now
         context['form'] = inventario_form()

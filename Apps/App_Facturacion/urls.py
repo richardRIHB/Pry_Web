@@ -2,6 +2,8 @@ from django.urls import path
 
 from Apps.App_Facturacion.views.compra.views import CompraCreateView, compra_view, CompraUpdateView, CompraPdfView
 from Apps.App_Facturacion.views.cuentas_compra.views import cuentas_compra_list_view, cuentas_compra_pfd_view
+from Apps.App_Facturacion.views.devolucion.view import devolucion_create_view, devolucion_list_view, \
+    devolucion_factura_view
 from Apps.App_Facturacion.views.devolucion_compra.views import devolucion_compra_list_view, devolucion_compra_create_view, devolucion_compra_pdf_view
 from Apps.App_Facturacion.views.empresa.views import empresa_view
 from Apps.App_Facturacion.views.galeria.views import galeria_view, galeria_show_view
@@ -9,6 +11,7 @@ from Apps.App_Facturacion.views.inventario.views import inventario_view
 from Apps.App_Facturacion.views.marca.views import marca_show_view, marca_view
 from Apps.App_Facturacion.views.pedido.views import pedido_list_view, pedido_recibo_view
 from Apps.App_Facturacion.views.producto.views import producto_view, producto_show_view
+from Apps.App_Facturacion.views.producto_deteriorado.views import gestion_inventario_list_view
 from Apps.App_Facturacion.views.proforma.views import proforma_list_view, proforma_create_view, proforma_update_view, \
     proforma_factura_view
 from Apps.App_Facturacion.views.proforma_compra.views import proforma_compra_list_view, proforma_compra_create_view, proforma_compra_update_view, proforma_compra_pdf_view
@@ -25,8 +28,6 @@ app_name = 'App_Facturacion'
 urlpatterns = [
     path('cliente/list/', cliente_view.as_view(), name='cliente_list'),
     path('cliente/show/<int:pk>/', cliente_show_view.as_view(), name='cliente_show'),
-    path('producto/list/', producto_view.as_view(), name='producto_list'),
-    path('producto/show/<int:pk>/', producto_show_view.as_view(), name='producto_show'),
     path('dashboard/', dashboard_view.as_view(), name='dashboard'),
     path('venta/list/', venta_list_view.as_view(), name='venta_list'),
     path('venta/add/', venta_create_view.as_view(), name='venta_create'),
@@ -40,12 +41,21 @@ urlpatterns = [
     path('proforma/factura/pdf/<int:pk>/', proforma_factura_view.as_view(), name='proforma_factura'),
     path('pedido/list/', pedido_list_view.as_view(), name='pedido_list'),
     path('pedido/recibo/<int:pk>/', pedido_recibo_view.as_view(), name='pedido_recibo'),
-    #url de cristiam
+    #Devolucion
+    path('devolucion/add/', devolucion_create_view.as_view(), name='devolucion_create'),
+    path('devolucion/list/', devolucion_list_view.as_view(), name='devolucion_list'),
+    path('devolucion/factura/pdf/<int:pk>/', devolucion_factura_view.as_view(), name='devolucion_factura_pdf'),
+    #Producto
+    path('producto/list/', producto_view.as_view(), name='producto_list'),
+    path('producto/show/<int:pk>/', producto_show_view.as_view(), name='producto_show'),
     path('marca/list/', marca_view.as_view(), name='marca_list'),
     path('marca/show/<int:pk>/', marca_show_view.as_view(), name='marca_show'),
     path('galeria/list/', galeria_view.as_view(), name='galeria_list'),
     path('galeria/show/<int:pk>/', galeria_show_view.as_view(), name='galeria_show'),
     path('ubicacion/list/', ubicacion_view.as_view(), name='ubicacion_list'),
+    #Gestion inventario
+    path('gestion/inventario/list/', gestion_inventario_list_view.as_view(), name='gestion_inventario_list'),
+    #Proveedor
     path('proveedor/list/', proveedor_view.as_view(), name='proveedor_list'),
     path('proveedor/show/<int:pk>/', proveedor_show_view.as_view(), name='proveedor_show'),
     #Compra

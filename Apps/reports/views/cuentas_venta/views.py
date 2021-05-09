@@ -37,11 +37,10 @@ class report_cuentas_venta_view(LoginRequiredMixin, TemplateView):
                 search = ''
                 if fil and clien == '':
                     search = Cuentas.objects.all()
+                    search = search.filter(estado_venta=True)
                     if fil == 'valores_pendientes':
-                        #search = search.filter(estado_compra=True)
                         search = search.filter(estado=False)
                     elif fil == 'pagado':
-                        #search = search.filter(estado_compra=True)
                         search = search.filter(estado=True)
                     for s in search:
                         data.append([
@@ -53,11 +52,10 @@ class report_cuentas_venta_view(LoginRequiredMixin, TemplateView):
                         ])
                 elif fil and clien:
                     search = Cuentas.objects.filter(venta__cliente_id=clien)
+                    search = search.filter(estado_venta=True)
                     if fil == 'valores_pendientes':
-                        #search = search.filter(estado_compra=True)
                         search = search.filter(estado=False)
                     elif fil == 'pagado':
-                        #search = search.filter(estado_compra=True)
                         search = search.filter(estado=True)
                     for s in search:
                         data.append([
@@ -129,12 +127,11 @@ class reporte_cuentas_venta_pdf_view(LoginRequiredMixin, View):
             search = ''
             if fil and clien == 'null':
                 search = Cuentas.objects.all()
+                search = search.filter(estado_venta=True)
                 if fil == 'valores_pendientes':
-                    #search = search.filter(estado_compra=True)
                     search = search.filter(estado=False)
                     fitro_text = 'Reporte de Cuentas de Venta con Valores Pendientes'
                 elif fil == 'pagado':
-                    #search = search.filter(estado_compra=True)
                     search = search.filter(estado=True)
                     fitro_text = 'Reporte de Cuentas de Venta con Valores Cancelados'
                 for s in search:
@@ -148,12 +145,11 @@ class reporte_cuentas_venta_pdf_view(LoginRequiredMixin, View):
                 cliente = {'cliente': '------------------', 'reporte': fitro_text, 'cedula': '------------------', 'fecha': datetime.now}
             elif fil and clien != 'null':
                 search = Cuentas.objects.filter(venta__cliente_id=clien)
+                search = search.filter(estado_venta=True)
                 if fil == 'valores_pendientes':
-                    #search = search.filter(estado_compra=True)
                     search = search.filter(estado=False)
                     fitro_text = 'Reporte de Cuentas de Venta con Valores Pendientes'
                 elif fil == 'pagado':
-                    #search = search.filter(estado_compra=True)
                     search = search.filter(estado=True)
                     fitro_text = 'Reporte de Cuentas de Venta con Valores Cancelados'
                 for s in search:

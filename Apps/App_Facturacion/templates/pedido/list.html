@@ -6,9 +6,9 @@
 
 {% block columns %}
     <tr>
-        <th scope="col" style="width: 5%; ">NºFactura</th>
-        <th scope="col" style="width: 15%; ">Cliente</th>
-        <th scope="col" style="width: 15%; ">Fecha-Creación</th>
+        <th scope="col" style="width: 5%; ">Fact_Nº</th>
+        <th scope="col" style="width: 18%; ">Cliente</th>
+        <th scope="col" style="width: 17%; ">Fecha-Creación</th>
         <th scope="col" style="width: 15%; ">Fecha-Entrega</th>
         <th scope="col" style="width: 5%; ">Estado</th>
         <th scope="col" style="width: 10%; ">Estado_Entrega</th>
@@ -21,7 +21,13 @@
 {% endblock %}
 
 {% block buttons_list %}
+    <div class="card-footer">
 
+        <a href="{{ list_url }}" class="btn btn-success btn-sm btnTest">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+
+    </div>
 {% endblock %}
 
 

@@ -40,12 +40,14 @@ var vents = {
                 aux = true;
             }
         });
-        if (aux === false) {
+        stock_r = parseInt(item.producto.stock)
+        cant_real = stock_r / item.conversion_stock
+        if (parseInt(cant_real)>=1 && aux === false){
             this.items.products.push(item);
             this.list();
+        } else if(parseInt(cant_real)<1) {
+            Swal.fire('Notificación', '<strong>STOCK INSUFICIENTE:  </strong> Verificar el STOCK');
         }
-
-
     },
     list: function () {
         this.calculate_invoice();
@@ -53,6 +55,7 @@ var vents = {
             responsive: true,
             autoWidth: false,
             destroy: true,
+            order: [],
             data: this.items.products,
             columns: [
                 {"data": "cantidad"},
@@ -75,7 +78,7 @@ var vents = {
                 {
                     targets: [1],
                     class: 'text-center',
-                    orderable: true,
+                    orderable: false,
                     render: function (data, type, row) {
                         html = row.producto.nombre + ' - ' + row.producto.marca.nombre + ' - ' + row.medida
                         return html;
@@ -86,7 +89,8 @@ var vents = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '$' + parseFloat(data).toFixed(2);
+                        pvp_item = parseFloat(data).toFixed(2) - parseFloat(row.descuento);
+                        return '$' + parseFloat(pvp_item).toFixed(2);
                     }
                 },
                 {
@@ -94,7 +98,9 @@ var vents = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<input type="text" name="stock" class="form-control form-control-sm input-sm" autocomplete="off" value="' + parseFloat(data).toFixed(2) + '" hidden>' + '<span  class="badge badge-success" id="stock" >' + parseFloat(data).toFixed(2) + '</span>'
+                        stock_r = parseInt(data)
+                        cant_real = stock_r / row.conversion_stock
+                        return '<input type="text" name="stock" class="form-control form-control-sm input-sm" autocomplete="off" value="' + parseFloat(data).toFixed(2) + '" hidden>' + '<span  class="badge badge-success" id="stock" >' + parseInt(cant_real) + '</span>'
                     }
                 },
                 {
@@ -124,10 +130,11 @@ var vents = {
 
             ],
             rowCallback(row, data, displayNum, displayIndex, dataIndex) {
-
+                stock_r = parseInt(data.producto.stock)
+                cant_real = stock_r / data.conversion_stock
                 $(row).find('input[name="cant"]').TouchSpin({
                     min: 1,
-                    max: 1000000000,
+                    max: parseInt(cant_real),
                     step: 1
                 });
                 $(row).find('input[name="desc"]').TouchSpin({
@@ -136,7 +143,6 @@ var vents = {
                     max: 1000,
                     step: 0.01
                 });
-
             },
             initComplete: function (settings, json) {
 
@@ -149,7 +155,8 @@ function formatRepo(repo) {
     if (repo.loading) {
         return repo.text;
     }
-
+    stock_r = parseInt(repo.producto.stock)
+    cant_real = stock_r / repo.conversion_stock
     var option = $(
         '<div class="wrapper container">' +
         '<div class="row">' +
@@ -161,7 +168,7 @@ function formatRepo(repo) {
         '<p style="margin-bottom: 0;">' +
         repo.producto.nombre + ' ' + repo.producto.marca.nombre + ' ' + repo.producto.descripcion.substr(0, 70) + '<br>' +
         '<b>PVP:</b> <span class="badge badge-warning">$' + parseFloat(repo.pvp_medida).toFixed(2) + '</span>' +
-        '<b>    STOCK:</b> <span class="badge badge-success">' + repo.producto.stock + '</span>' +
+        '<b>    STOCK:</b> <span class="badge badge-success">' + parseInt(cant_real) + '</span>' +
         '<b>    MEDIDA:</b> <span class="badge badge-dark">' + repo.medida + '</span>' +
         '</p>' +
         '</div>' +
@@ -186,7 +193,7 @@ function formatRepo_cliente(repo) {
         '<div class="wrapper container">' +
         '<div class="row">' +
         '<div class="col-lg-1">' +
-        '<i class="fas fa-user-tag"></i>' +
+        '<i class="fas fa-user-tag "></i>' +
         '</div>' +
         '<div class="col-lg-11 text-left shadow-sm">' +
         //'<br>' +
@@ -252,11 +259,9 @@ $(function () {
     });
 
 
-    $("input[name='iva']").val(0.12);
-
     $("input[name='valor_recibido']").TouchSpin({
         min: 0.00,
-        max: 1000,
+        max: 10000,
         step: 0.01,
         decimals: 2,
         boostat: 5,
@@ -298,7 +303,7 @@ $(function () {
 
     $('.btnRemoveAll').on('click', function () {
         if (vents.items.products.length === 0) return false;
-        alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle?', function () {
+        alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle de productos?', function () {
             vents.items.products = [];
             vents.list();
         }, function () {
@@ -324,11 +329,14 @@ $(function () {
             }
             var cantidad = parseInt($(this).val());
             var tr = tblProducts.cell($(this).closest('td, li')).index();
-            var stock = parseInt(vents.items.products[tr.row].stock);
-            if (cantidad > stock) {
-                vents.items.products[tr.row].cantidad = stock;
+            var data = vents.items.products[tr.row];
+            var stock_r = parseInt(data.producto.stock)
+            var stock_real = parseInt(stock_r / data.conversion_stock)
+
+            if (cantidad > stock_real) {
+                vents.items.products[tr.row].cantidad = stock_real;
                 Swal.fire('Notificación', '<strong>Stock insuficiente:  </strong> Verificar cantidad a vender');
-                $(this).val(stock);
+                $(this).val(stock_real);
             } else {
                 vents.items.products[tr.row].cantidad = cantidad;
             }
@@ -339,10 +347,8 @@ $(function () {
             if (isNaN(parseFloat($(this).val()))) {
                 $(this).val(0.00);
             }
-
-            // Swal.fire('Notificación', '<strong>AUTORIZAR DESCUENTO:  </strong> Verificar descuento');
             var tr = tblProducts.cell($(this).closest('td, li')).index();
-            var data = vents.items.products[tr.row]
+            var data = vents.items.products[tr.row];
 
             pvp_item = parseFloat(data.pvp_medida) - parseFloat($(this).val());
 
@@ -362,7 +368,10 @@ $(function () {
             }
 
             vents.calculate_invoice();
+            pvp_item=parseFloat(data.pvp_medida) - parseFloat($(this).val());
             $('td:eq(5)', tblProducts.row(tr.row).node()).html('$' + vents.items.products[tr.row].subtotal.toFixed(2));
+            $('td:eq(2)', tblProducts.row(tr.row).node()).html('$' + pvp_item.toFixed(2));
+
         });
 
     $('.btnClearSearch').on('click', function () {
@@ -378,12 +387,10 @@ $(function () {
             return false;
         }
 
-
         vents.items.fecha = $('input[name="fecha"]').val();
         vents.items.cliente = $('select[name="cliente"]').val();
         vents.items.metodo_pago = document.getElementById('id_metodo_pago').checked;
         vents.items.descripcion = $('#id_descripcion_credito').val();
-
 
         if (vents.items.cliente.length === 0) {
             message_error('Seleccione un Cliente');
@@ -401,11 +408,9 @@ $(function () {
             }, function () {
                 location.href = '/App_Facturacion/venta/list/';
             });
-            // location.href = '/App_Facturacion/venta/list/';
         });
     });
 
-    // vents.list();
     $('select[name="search"]').select2({
         theme: "bootstrap4",
         language: 'es',
@@ -434,8 +439,7 @@ $(function () {
         var data = e.params.data;
         data.cantidad = 1;
         data.subtotal = 0.00;
-        data.descuento = 0.00
-
+        data.descuento = 0.00;
         vents.add(data);
         $(this).val('').trigger('change.select2');
     });

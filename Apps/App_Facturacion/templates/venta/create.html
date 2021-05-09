@@ -50,14 +50,13 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <button type="button" class="btn btn-danger btn-xs btn-flat btnRemoveAll">
+                                <button type="button" class="btn bg-danger btn-xs btnRemoveAll">
                                     <i class="fas fa-trash"></i> Eliminar Items
                                 </button>
                                 <hr>
                                 <table class="table table-bordered" id="tblProducts">
                                     <thead>
                                     <tr>
-
                                         <th style="width: 20%">Cantidad</th>
                                         <th>Producto</th>
                                         <th>PVP</th>
@@ -87,15 +86,14 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Buscar Cliente:</label>
-                                        <div class="input-group">
+                                        <div class="input-group margin btn-group">
                                             {{ form.cliente }}
-                                            <div class="input-group-append">
-                                                <button class="btn btn-success btn-flat btnAddClient" type="button">
+                                            <div class="input-group-append btn-group">
+                                                <button class="btn btn-success btnAddClient" type="button">
                                                     <i class="fas fa-user-plus"></i>
                                                 </button>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -163,10 +161,10 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary btn-flat">
+                <button type="submit" class="btn btn-primary btn-sm btnTest">
                     <i class="fas fa-save"></i> Guardar registro
                 </button>
-                <a href="{{ list_url }}" class="btn btn-danger btn-flat">
+                <a href="{{ list_url }}" class="btn btn-danger btn-sm btnTest">
                     <i class="fas fa-times"></i> Cancelar
                 </a>
             </div>

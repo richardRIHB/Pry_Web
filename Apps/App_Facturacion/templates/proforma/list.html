@@ -6,8 +6,7 @@
 
 {% block columns %}
     <tr>
-        <th scope="col">Items</th>
-        <th scope="col">Factura Nª</th>
+        <th scope="col" style="width: 10%; ">Proforma Nª</th>
         <th scope="col">Cliente</th>
         <th scope="col">Fecha de registro</th>
         <th scope="col">Total</th>
@@ -17,6 +16,19 @@
 
 {% block rows %}
 
+{% endblock %}
+
+{% block buttons_list %}
+    <div class="card-footer">
+
+        <a href="{{ create_url }}" class="btn btn-primary btn-sm btnTest">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-sm">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+
+    </div>
 {% endblock %}
 
 {% block javascript %}
@@ -34,14 +46,14 @@
                 <div class="modal-body">
                     <table class="table table-bordered" id="tblDet">
                         <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Categoría</th>
-                            <th>PVP</th>
-                            <th>Cantidad</th>
-                            <th>Subtotal</th>
-
-                        </tr>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Medida</th>
+                                <th>PVP</th>
+                                <th>Descuento</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
                         </thead>
                         <tbody>
                         </tbody>

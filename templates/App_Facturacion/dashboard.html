@@ -253,7 +253,7 @@
             }).done(function (data) {
                 if (!data.hasOwnProperty('error')) {
                     for (i in data) {
-                        console.log(data[i]);
+
                         graphcolumn.addSeries(data[i]);
                     }
                     return false;

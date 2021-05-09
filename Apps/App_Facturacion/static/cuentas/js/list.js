@@ -31,7 +31,7 @@ function get_data() {
         autoWidth: false,
         destroy: true,
         deferRender: true,
-        order: [[ 2, "desc" ]],
+        order: [[ 0, "desc" ]],
         ajax: {
             url: window.location.pathname,
             type: 'POST',
@@ -42,7 +42,7 @@ function get_data() {
         },
         columns: [
             {"data": "venta.id"},
-            {"data": "venta.cliente.cliente"},
+            {"data": "venta.cliente.apellido"},
             {"data": "fecha"},
             {"data": "descripcion"},
             {"data": "valor"},
@@ -51,6 +51,13 @@ function get_data() {
             {"data": "id"},
         ],
         columnDefs: [
+            {
+                targets: [1],
+                orderable: false ,
+                render: function (data, type, row) {
+                    return data
+                }
+            },
             {
                 targets: [3],
                 orderable: false ,
@@ -110,12 +117,13 @@ $(function () {
 
     $('#data tbody')
         .on('click', 'a[rel="abonar"]', function () {
+            limpiarFormModal();
             $('input[name="action"]').val('add');
             modal_title.find('span').html('Registrar Abono');
-            console.log(modal_title.find('i'));
             modal_title.find('i').removeClass().addClass('fas fa-plus');
             var tr = tblCuentas.cell($(this).closest('td, li')).index();
             var data = tblCuentas.row(tr.row).data();
+            $('input[name="valor"]').trigger("touchspin.updatesettings", {max: data.saldo});
             $('#lbl_valor').html("Valor: Deuda $" + data.saldo);
             $("input[name='valor']").TouchSpin({
                 min: 0,
@@ -130,10 +138,7 @@ $(function () {
                     $(this).val(0.00);
                 }
             }).val(data.saldo);
-            $('#fecha').datetimepicker({
-                format: 'DD-MM-YYYY HH:mm A',
-                date: moment().format("YYYY-MM-DD HH:mm "),
-            });
+            $("input[name='fecha']").val(moment().format("DD/MM/YYYY HH:mm A"));
             $('#span_cuentas').html(data.id);
             $("input[name='cuentas']").val(data.id)
             $('#myModalAbonos').modal('show');
@@ -245,3 +250,7 @@ $(function () {
             });
     });
 });
+
+function limpiarFormModal() {
+    $('form')[0].reset();
+}

@@ -20,7 +20,7 @@ function get_data() {
             {"data": "id"},
             {"data": "producto.nombre"},
             {"data": "medida"},
-            {"data": "producto.precio"},
+            {"data": "producto.stock"},
             {"data": "pvp_medida"},
             {"data": "porcentaje_conversion"},
             {"data": "estado"},
@@ -42,17 +42,28 @@ function get_data() {
             },
             {
                 targets: [2],
-                orderable: false,
-                render: function (data, type, row) {
-                    return data + ' (' + row.equivalencia + ')';
-                }
-            },
-            {
-                targets: [3,4],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    return '$' + data;
+                    return data;
+                }
+            },
+            {
+                targets: [3],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    stock_r = parseInt(data)
+                    cant_real = stock_r / row.conversion_stock
+                    return '<span  class="badge badge-primary">' + parseInt(cant_real) + '</span>';
+                }
+            },
+            {
+                targets: [4],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '$' + parseFloat(data).toFixed(2);
                 }
             },
             {
@@ -60,9 +71,9 @@ function get_data() {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<a href="#" rel="edit" title="Editar Producto" class="btn btn-warning btn-xs btn-flat btnEdit"><i class="fas fa-edit"></i></a> ';
+                    var buttons = '<a href="#" rel="edit" title="Editar Producto" class="btn btn-warning btn-xs btnEdit"><i class="fas fa-edit"></i></a> ';
                     if (row.estado === true) {
-                        buttons += '<a href="#" rel="delete" title="Eliminar Producto" class="btn btn-danger btn-xs btn-flat btnDelete"><i class="fas fa-trash-alt"></i></a> ';
+                        buttons += '<a href="#" rel="delete" title="Eliminar Producto" class="btn btn-danger btn-xs btnDelete"><i class="fas fa-trash-alt"></i></a> ';
                     }
                     return buttons
                 }
@@ -86,9 +97,12 @@ function get_data() {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var html = '<span  class="badge badge-success sorting"><i class="fas fa-arrow-up"></i></span>'
+                    var html = '<span  class="badge badge-success sorting" title="GANANCIA"><i class="fas fa-arrow-up"></i></span>'
                     if (row.tipo_conversion === true) {
-                        html = '<span  class="badge badge-danger sorting"><i class="fas fa-arrow-down"></i></span>'
+                        html = '<span  class="badge badge-danger sorting" title="DESCUENTO"><i class="fas fa-arrow-down"></i></span>'
+                    }
+                    if (data==='0.00'){
+                        html = '<span  class="badge badge-dark sorting" ><i class="fas fa-minus"></i>'
                     }
                     return data + '% ' + html
                 }
@@ -120,8 +134,8 @@ function formatRepo(repo) {
         '<div class="col-lg-11 text-left shadow-sm">' +
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
-        '<b>Nombre:</b> ' + repo.nombre + '(' + repo.descripcion + ')' + '<br>' +
-        '<b>Marca:</b> <span class="badge badge-info">' + repo.marca.nombre + '</span>' + '<br>' +
+        repo.nombre + ' ' + repo.descripcion.substr(0, 160) + '<br>' +
+        '<b>Marca:</b> <span class="badge bg-dark">' + repo.marca.nombre + '</span>' + ' ' +
         '<b>Estado:</b> ' + html +
         '</p>' +
         '</div>' +
@@ -223,7 +237,7 @@ $(function () {
             var parameters = new FormData();
             parameters.append('action', 'delete');
             parameters.append('id', data.id);
-            submit_with_ajax(window.location.pathname, 'Notificación', '¿Estas seguro de eliminar el registro Nº '+'<span  class="badge badge-success" > '+ data.producto.id +'</span>'+ '<span  class="badge badge-primary" style="text-transform: uppercase;" > '+ data.producto.nombre+' - '+ data.medida+'('+ data.equivalencia +')' +'</span>' +'?', parameters, function () {
+            submit_with_ajax(window.location.pathname, 'Notificación', '¿Estas seguro de eliminar el registro Nº '+'<span  class="badge badge-success" > '+ data.producto.id +'</span>'+ '<span  class="badge badge-primary" style="text-transform: uppercase;" > '+ data.producto.nombre+' '+ data.producto.marca.nombre +' '+ data.medida +'</span>' +'?', parameters, function () {
                 $('form')[0].reset();
                 tblInventario.ajax.reload();
             });

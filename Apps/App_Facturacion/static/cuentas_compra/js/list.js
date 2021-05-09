@@ -33,7 +33,7 @@ function get_data() {
                 targets: [1],
                 orderable: false,
                 render: function (data, type, row) {
-                    return data.split(' ')[0] + ' ' + row.compra.proveedor.apellido.split(' ')[0] + ' ' +row.compra.proveedor.apellido.split(' ')[1].substring(-1,2);
+                    return data.split(' ')[0] + ' ' + row.compra.proveedor.apellido.split(' ')[0];
                 }
             },
             {
@@ -121,7 +121,6 @@ $(function () {
             limpiarFormModal();
             $('input[name="action"]').val('add');
             modal_title.find('span').html('Registrar Abono');
-            console.log(modal_title.find('i'));
             modal_title.find('i').removeClass().addClass('fas fa-plus');
             var tr = tblCuentas.cell($(this).closest('td, li')).index();
             var data = tblCuentas.row(tr.row).data();

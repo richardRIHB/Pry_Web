@@ -76,6 +76,16 @@ class producto_view(LoginRequiredMixin, TemplateView):
                     estad = request.POST['estado_valor']
                     prod.estado = estad.capitalize()
                     prod.save()
+                    inv = Inventario()
+                    inv.producto_id = prod.pk
+                    inv.medida = 'UND'
+                    inv.equivalencia = 1
+                    inv.pvp_medida = prod.precio
+                    inv.porcentaje_conversion = 0
+                    inv.tipo_conversion = True
+                    inv.conversion_stock = 1
+                    inv.estado = True
+                    inv.save()
             elif action == 'edit':
                 with transaction.atomic():
                     prod = Producto.objects.get(pk=request.POST['id'])

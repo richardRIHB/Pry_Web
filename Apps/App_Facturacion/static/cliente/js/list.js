@@ -36,9 +36,9 @@ function get_data() {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var botones = '<a href="#" rel="edit" title="Editar Cliente" class="btn btn-warning btn-xs btn-flat btnEdit"><i class="fas fa-edit"></i></a> ';
+                    var botones = '<a href="#" rel="edit" title="Editar Cliente" class="btn btn-warning btn-xs btnEdit"><i class="fas fa-edit"></i></a> ';
                     if (row.estado === true) {
-                        botones += '<a href="#" rel="delete" title="Eliminar Cliente" class="btn btn-danger btn-xs btn-flat btnDelete"><i class="fas fa-trash-alt"></i></a> ';
+                        botones += '<a href="#" rel="delete" title="Eliminar Cliente" class="btn btn-danger btn-xs btnDelete"><i class="fas fa-trash-alt"></i></a> ';
                     }
                     return botones
                 }

@@ -35,7 +35,7 @@ function generate_report() {
                 extend: 'excelHtml5',
                 text: 'Descargar Excel <i class="fas fa-file-excel"></i>',
                 titleAttr: 'Excel',
-                className: 'btn btn-success ',
+                className: 'btn btn-success btn-sm btnTest',
                 messageTop: 'CLIENTE: '+ cliente_excel,
                 messageBottom: 'Fecha de Creación: ' + date_now,
                 title: t_filtro_excel + ' ' + date_now,
@@ -73,7 +73,7 @@ function generate_report() {
 
         }
     });
-    $('<button type="button" class="btn btn-danger btnPDF" title="PDF"><a href="/reports/cuentas/venta/pdf/'+ tipo_filtro +'/'+ cliente +'/" STYLE="color: white" target="_blank">Descargar Pdf <i class="fas fa-file-pdf"></i></a></button>').appendTo('div.dt-buttons');
+    $('<button type="button" class="btn btn-danger btnPDF btn-sm btnTest" title="PDF"><a href="/reports/cuentas/venta/pdf/'+ tipo_filtro +'/'+ cliente +'/" STYLE="color: white" target="_blank">Descargar Pdf <i class="fas fa-file-pdf"></i></a></button>').appendTo('div.dt-buttons');
 }
 
 function formatRepo_cliente(repo) {

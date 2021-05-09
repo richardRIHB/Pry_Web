@@ -1,14 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
-from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DeleteView, UpdateView
-from django.utils import timezone
+from django.views.generic import ListView
 from datetime import datetime
-
 from django.template.loader import get_template
-
 from Apps.App_Facturacion.forms import abonos_form
 from Apps.App_Facturacion.models import Cuentas, Abono, Empresa
 from django.utils.decorators import method_decorator

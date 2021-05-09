@@ -47,7 +47,7 @@ function generate_report() {
                 extend: 'excelHtml5',
                 text: 'Descargar Excel <i class="fas fa-file-excel"></i>',
                 titleAttr: 'Excel',
-                className: 'btn btn-success  ',
+                className: 'btn btn-success btn-sm btnTest  ',
                 messageTop: 'PROVEEDOR: '+ provee_excel,
                 messageBottom: 'Fecha: ' + fecha_inicio + ' - ' + fecha_final,
                 title: 'Reporte de compras - ' + date_now,
@@ -72,7 +72,7 @@ function generate_report() {
 
         }
     });
-    $('<button type="button" class="btn btn-danger btnPDF" title="PDF"><a href="/reports/compra/pdf/'+ fecha_inicio +'/'+ fecha_final +'/'+ provee_pk +'/" STYLE="color: white" target="_blank">Descargar Pdf <i class="fas fa-file-pdf"></i></a></button>').appendTo('div.dt-buttons');
+    $('<button type="button" class="btn btn-danger btnPDF btn-sm btnTest" title="PDF"><a href="/reports/compra/pdf/'+ fecha_inicio +'/'+ fecha_final +'/'+ provee_pk +'/" STYLE="color: white" target="_blank">Descargar Pdf <i class="fas fa-file-pdf"></i></a></button>').appendTo('div.dt-buttons');
 }
 
 function formatRepo_proveedor(repo) {

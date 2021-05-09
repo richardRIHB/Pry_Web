@@ -14,8 +14,8 @@
         <th scope="col" style="width:8%">Prod_Nº</th>
         <th scope="col">Descripcion</th>
         <th scope="col">Unidad Medida</th>
+        <th scope="col">Stock</th>
         <th scope="col">PVP</th>
-        <th scope="col">PVP Medida</th>
         <th scope="col">% Conversion</th>
         <th scope="col">Estado</th>
         <th scope="col">Opciones</th>
@@ -32,10 +32,10 @@
 
         <div class="row">
              <div class="col-lg-4">
-                <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+                <a class="btn btn-primary btn-sm btnTest btnAdd" style="color: white;">
                     <i class="fas fa-plus"></i> Nuevo registro
                 </a>
-                <a href="{{ list_url }}" class="btn btn-success btn-flat">
+                <a href="{{ list_url }}" class="btn btn-success btn-sm btnTest">
                     <i class="fas fa-sync"></i> Actualizar
                 </a>
             </div>
@@ -43,7 +43,10 @@
 
             </div>
             <div class="col-lg-4" align="right">
-                <a href="{{ list_producto_url }}" class="btn bg-success btn-flat" style="color: white;">
+                <a href="{{ list_gestion_inventario__url }}" class="btn bg-red color-palette btn-sm btnTest" style="color: white;">
+                    <i class="fas fa-bars"></i> Gestion Inventario
+                </a>
+                <a href="{{ list_producto_url }}" class="btn bg-success btn-sm btnTest" style="color: white;">
                     <i class="fas fa-lightbulb"></i> Producto
                 </a>
             </div>

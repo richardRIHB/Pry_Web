@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from Apps.App_Facturacion.models import Cliente, Producto, Venta, Marca, Proveedor, Compra, Cuentas_Compra, \
-    Devolucion_Compra, Detalle_Compra, Inventario, Empresa
+    Devolucion_Compra, Detalle_Compra, Inventario, Empresa, Pedido
 from django.utils.translation import get_language, activate
 from datetime import datetime
 from django.template.defaultfilters import date
@@ -93,7 +93,7 @@ class dashboard_view(LoginRequiredMixin, TemplateView):
         try:
             year = datetime.now().year
             for m in range(1, 13):
-                total = Venta.objects.filter(fecha__year=year, fecha__month=m, estado=True,estado_entrega=False,tipo_documento=False).aggregate(
+                total = Pedido.objects.filter(fecha__year=year, fecha__month=m, estado=True,estado_entrega=True).aggregate(
                     r=Coalesce(Sum('total'), 0)).get('r')
                 data.append(float(total))
         except:
@@ -119,7 +119,7 @@ class dashboard_view(LoginRequiredMixin, TemplateView):
         try:
             for p in Producto.objects.all():
                 total = Detalle_Venta.objects.filter(venta__fecha__year=year, venta__fecha__month=month,
-                                                     producto_id=p.id).aggregate(
+                                                     inventario__producto_id=p.id).aggregate(
                     r=Coalesce(Sum('total'), 0)).get('r')
                 if total > 0:
                     data.append({
@@ -134,7 +134,6 @@ class dashboard_view(LoginRequiredMixin, TemplateView):
         data = []
         year = datetime.now().year
         month = datetime.now().month
-        print('hola')
         try:
             for p in Producto.objects.all():
                 total = Detalle_Compra.objects.filter(compra__fecha__year=year, compra__fecha__month=month,

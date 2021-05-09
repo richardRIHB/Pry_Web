@@ -3,7 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <style>
     .img-invoice {
-        width: 50px;
+        width: 300px;
         text-align: center;
         margin: 0 auto;
     }
@@ -15,7 +15,7 @@
 
     #invoice thead tr th {
         text-align: left;
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid #000000;
         border-top: 1px solid black;
         padding-top: 4px;
     }
@@ -32,37 +32,59 @@
     .text-center {
         text-align: center;
     }
+
+    #invoice th {
+        background-color: grey;
+        color: white;
+    }
 </style>
 <body>
-<img src="{{ icon }}" class="img-invoice">
-<p class="head">
-    {{ comp.name|upper }}<br>
-    {{ comp.ruc }}<br>
-    {{ comp.address|upper }}
-</p>
-<p>
-    <b>PROFORMA:</b> {{ venta.id }}<br>
-    <b>FECHA DE PROFORMA:</b> {{ venta.fecha }}<br>
-    <b>CLIENTE:</b> {{ venta.cliente|upper }}<br>
-    <b>DNI:</b> {{ venta.cliente.c_i }}<br>
-</p>
+<table>
+    <thead>
+    <tr>
+        <th align="left">
+            <img src="{{ icon }}" class="img-invoice" height="90px">
+        </th>
+    </tr>
+    <tr>
+
+    </tr>
+    <tr>
+        <th align="left"  style="width: 60%;">
+            <p >
+                {{ comp.name|upper }}<br>
+                Ruc: {{ comp.ruc }} - Telf: {{ comp.telefono }}<br>
+                {{ comp.address|upper }}<br>
+                {{ comp.ubicacion }}<br>
+                Email: {{ comp.correo }}<br>
+            </p>
+        </th>
+        <th align="left" style="width: 40%;">
+            <b>PROFORMA Nª:</b> {{ venta.id }}<br>
+            <b>FECHA DE PROFORMA:</b> {{ venta.fecha }}<br>
+            <b>CLIENTE:</b> {{ venta.cliente|upper }}<br>
+            <b>DNI:</b> {{ venta.cliente.c_i }}<br>
+        </th>
+    </tr>
+
+</table>
 <table id="invoice">
     <thead>
     <tr>
-        <th style="width: 20%;">DESCRIPCION</th>
-        <th style="width: 40%;">PRODUCTO</th>
-        <th style="width: 10%;">CANT</th>
-        <th style="width: 15%;">P.UNITARIO</th>
-        <th style="width: 15%;">TOTAL</th>
+        <th style="width: 40%;">DESCRIPCION</th>
+        <th style="width: 15%;">CANTIDAD</th>
+        <th class="text-center" style="width: 15%;">P.UNITARIO</th>
+        <th style="width: 10%;">DESCUENTO</th>
+        <th style="width: 20%; text-align: right">TOTAL  &nbsp;</th>
     </tr>
     </thead>
     <tbody>
     {% for d in venta.detalle_venta_set.all %}
         <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
-            <td>{{ d.producto.descripcion }}</td>
-            <td>{{ d.producto.nombre }}</td>
-            <td class="text-center">{{ d.cantidad }}</td>
-            <td class="text-center">${{ d.precio }}</td>
+            <td>{{ d.inventario.producto.nombre }} - {{ d.inventario.producto.marca.nombre }} - {{ d.inventario.medida }}</td>
+            <td>{{ d.cantidad }}</td>
+            <td>${{ d.precio }}</td>
+            <td>${{ d.descuento }} </td>
             <td style="text-align: right;">${{ d.total }}</td>
         </tr>
     {% endfor %}
@@ -71,7 +93,7 @@
         <td style="text-align: right">${{ venta.subtotal }}</td>
     </tr>
     <tr style="padding-top: 0px;">
-        <td colspan="4"><b>IVA 12%</b></td>
+        <td colspan="4"><b>IVA {{ venta.iva_base }}%</b></td>
         <td style="text-align: right">${{ venta.iva }}</td>
     </tr>
     <tr style="padding-top: 0px;">

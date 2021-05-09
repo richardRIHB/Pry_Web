@@ -53,7 +53,7 @@
                             <label for="email">{{ form.correo.label }}:</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
-                                    <div class="input-group-text">@</div>
+                                    <div class="input-group-text"><i class="fas fa-at mr-2"></i></div>
                                 </div>
                                 {{ form.correo }}
                             </div>
@@ -73,45 +73,65 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label for="email">{{ form.imagen.label }}:</label>
-                            {{ form.imagen|attr:'onchange:return validarInputFile()' }}
-                            <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label for="email">{{ form.logo_login.label }}:</label>
-                            {{ form.logo_login|attr:'onchange:return validarInputFile_logo()' }}
-                            <input type="button" value="Subir Imagen" class="btn_img_logo form-control" id="btn_id_logo">
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-8">
                         <div class="form-group">
                             <label for="email">{{ form.sitio_web.label }}:</label>
-                            {{ form.sitio_web }}
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="fas fa-globe mr-2"></i></div>
+                                </div>
+                                {{ form.sitio_web }}
+                            </div>
+                        </div>
+                        <div class="card card-dark">
+                            <div class="card-header">
+                                <h6 class="card-title">
+                                    <i class="fas fa-image"></i>
+                                    {{ form.imagen.label }}
+                                </h6>
+
+                            </div>
+                            <div class="card-body" >
+                                <div class="box box-primary contenedorimg2" id="visorArchivo">
+
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="form-group">
+                                    {{ form.imagen|attr:'onchange:return validarInputFile()' }}
+                                    <input type="button" value="Subir Imagen" class="btn_img form-control" id="btn_id">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-lg-4">
-                        <div class="box box-primary contenedorimg2" id="visorArchivo">
+                        <div class="card card-dark">
+                            <div class="card-header">
+                                <h6 class="card-title">
+                                    <i class="fas fa-image"></i>
+                                    {{ form.logo_login.label }}
+                                </h6>
+                            </div>
+                            <div class="card-body" >
+                                <div class="box box-primary contenedorimg2_logo" id="visorArchivo_logo">
 
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="box box-primary contenedorimg2_logo" id="visorArchivo_logo">
-
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="form-group">
+                                    {{ form.logo_login|attr:'onchange:return validarInputFile_logo()' }}
+                                    <input type="button" value="Subir Imagen" class="btn_img_logo form-control" id="btn_id_logo">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary btn-flat">
+                <button type="submit" class="btn btn-primary btn-sm btnTest">
                     <i class="fas fa-save"></i> Guardar registro
                 </button>
-                <a href="{{ list_url }}" class="btn btn-danger btn-flat">
+                <a href="{{ list_url }}" class="btn btn-danger btn-sm btnTest">
                     <i class="fas fa-times"></i> Cancelar
                 </a>
             </div>

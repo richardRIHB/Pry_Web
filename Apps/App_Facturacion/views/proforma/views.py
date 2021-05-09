@@ -2,6 +2,7 @@ import json
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Coalesce
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -9,27 +10,18 @@ from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
-from django.views.generic import CreateView, ListView, DeleteView, UpdateView
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A6
-from reportlab.lib.units import cm
-from reportlab.platypus import TableStyle, Table
+from django.views.generic import CreateView, ListView, UpdateView
 from xhtml2pdf import pisa
-
+from datetime import datetime
 from Apps.App_Facturacion.forms import venta_form
-from Apps.App_Facturacion.models import Venta, Producto, Detalle_Venta, Cliente
-from reportlab.pdfgen import canvas
+from Apps.App_Facturacion.models import Venta, Detalle_Venta, Cliente, Empresa, Inventario
 from django.views.generic import View
 from django.conf import settings
-from io import BytesIO
 
 
 class proforma_list_view(LoginRequiredMixin, ListView):
     model = Venta
     template_name = 'proforma/list.html'
-
-    # permission_required = 'erp.view_sale'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -41,7 +33,7 @@ class proforma_list_view(LoginRequiredMixin, ListView):
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Venta.objects.filter(tipo_documento=True).order_by(Coalesce('id', 'cliente').desc()):
+                for i in Venta.objects.filter(tipo_documento=True).order_by('-id'):
                     data.append(i.toJSON())
             elif action == 'search_details_prod':
                 data = []
@@ -55,10 +47,11 @@ class proforma_list_view(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Listado de Proformas'
+        context['title'] = 'Listado de Proforma de Ventas'
         context['create_url'] = reverse_lazy('App_Facturacion:proforma_create')
         context['list_url'] = reverse_lazy('App_Facturacion:proforma_list')
         context['entity'] = 'Proforma'
+        context['date_now'] = datetime.now
         return context
 
 class proforma_create_view(LoginRequiredMixin, CreateView):
@@ -66,7 +59,6 @@ class proforma_create_view(LoginRequiredMixin, CreateView):
     form_class = venta_form
     template_name = 'proforma/create.html'
     success_url = reverse_lazy('App_Facturacion:proforma_list')
-    # permission_required = 'erp.add_sale'
     url_redirect = success_url
 
     @method_decorator(csrf_exempt)
@@ -79,37 +71,40 @@ class proforma_create_view(LoginRequiredMixin, CreateView):
             action = request.POST['action']
             if action == 'search_products':
                 data = []
-                prods = Producto.objects.filter(nombre__icontains=request.POST['term'])[0:10]
-                for i in prods:
+                list_invt = Inventario.objects.filter(Q(producto__nombre__icontains=request.POST['term'])|Q(producto__descripcion__icontains=request.POST['term'])|Q(producto__marca__nombre__icontains=request.POST['term']))[0:10]
+                for i in list_invt:
                     item = i.toJSON()
-                    item['value'] = i.nombre
+                    item['value'] = i.producto.nombre
                     data.append(item)
             elif action == 'add':
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
                     venta = Venta()
-                    venta.fecha = vents['fecha']
                     venta.cliente_id = vents['cliente']
                     venta.subtotal = float(vents['subtotal'])
                     venta.iva = float(vents['iva'])
                     venta.total = float(vents['total'])
                     venta.tipo_documento = bool(vents['tipo_documento'])
+                    venta.iva_base = float(request.POST['iva_base'])
                     venta.save()
                     for i in vents['products']:
                         det = Detalle_Venta()
                         det.venta_id = venta.id
-                        det.producto_id = i['id']
+                        det.inventario_id = i['id']
                         det.cantidad = int(i['cantidad'])
-                        det.precio = float(i['precio'])
+                        det.precio = float(i['pvp_medida'])
                         det.total = float(i['subtotal'])
+                        det.descuento = float(i['descuento'])
                         det.save()
-
                     data = {'id': venta.id}
             elif action == 'search_clientes':
                 data = []
-                list_cli = Cliente.objects.filter(nombre__icontains=request.POST['term'])[0:10]
+                list_cli = Cliente.objects.filter(
+                    Q(nombre__icontains=request.POST['term']) | Q(apellido__icontains=request.POST['term']) | Q(
+                        c_i__icontains=request.POST['term']))[0:10]
                 for i in list_cli:
                     cli = i.toJSON()
+                    cli['text'] = i.get_full_name()
                     data.append(cli)
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
@@ -117,12 +112,22 @@ class proforma_create_view(LoginRequiredMixin, CreateView):
             data['error'] = str(e)
         return JsonResponse(data, safe=False)
 
+    def get_iva_empresa(self):
+        data = ''
+        try:
+            emp = Empresa.objects.get(pk=1)
+            data = emp.iva
+        except:
+            data = '0'
+        return data
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Creación de una Proforma'
         context['entity'] = 'Proforma'
         context['list_url'] = self.success_url
         context['action'] = 'add'
+        context['iva'] = self.get_iva_empresa()
         context['det'] = []
         return context
 
@@ -143,22 +148,22 @@ class proforma_update_view(LoginRequiredMixin, UpdateView):
             action = request.POST['action']
             if action == 'search_products':
                 data = []
-                prods = Producto.objects.filter(nombre__icontains=request.POST['term'])[0:10]
-                for i in prods:
+                list_invt = Inventario.objects.filter(Q(producto__nombre__icontains=request.POST['term'])|Q(producto__descripcion__icontains=request.POST['term'])|Q(producto__marca__nombre__icontains=request.POST['term']))[0:10]
+                for i in list_invt:
                     item = i.toJSON()
-                    item['value'] = i.nombre
+                    item['value'] = i.producto.nombre
                     data.append(item)
             elif action == 'edit':
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
-                    # venta = Sale.objects.get(pk=self.get_object().id)
                     venta = self.get_object()
-                    venta.fecha = vents['fecha']
                     venta.cliente_id = vents['cliente']
                     venta.subtotal = float(vents['subtotal'])
                     venta.iva = float(vents['iva'])
                     venta.total = float(vents['total'])
                     venta.tipo_documento = bool(vents['tipo_documento'])
+                    venta.iva_base = float(request.POST['iva_base'])
+                    venta.fecha = datetime.now()
                     venta.save()
 
                     venta.detalle_venta_set.all().delete()
@@ -166,18 +171,21 @@ class proforma_update_view(LoginRequiredMixin, UpdateView):
                     for i in vents['products']:
                         det = Detalle_Venta()
                         det.venta_id = venta.id
-                        det.producto_id = i['id']
+                        det.inventario_id = i['id']
                         det.cantidad = int(i['cantidad'])
-                        det.precio = float(i['precio'])
+                        det.precio = float(i['pvp_medida'])
                         det.total = float(i['subtotal'])
+                        det.descuento = float(i['descuento'])
                         det.save()
-
                     data = {'id': venta.id}
             elif action == 'search_clientes':
                 data = []
-                list_cli = Cliente.objects.filter(nombre__icontains=request.POST['term'])[0:10]
+                list_cli = Cliente.objects.filter(
+                    Q(nombre__icontains=request.POST['term']) | Q(apellido__icontains=request.POST['term']) | Q(
+                        c_i__icontains=request.POST['term']))[0:10]
                 for i in list_cli:
                     cli = i.toJSON()
+                    cli['text'] = i.get_full_name()
                     data.append(cli)
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
@@ -189,11 +197,26 @@ class proforma_update_view(LoginRequiredMixin, UpdateView):
         data = []
         try:
             for i in Detalle_Venta.objects.filter(venta_id=self.get_object().id):
-                item = i.producto.toJSON()
-                item['cantidad'] = i.cantidad
+                item = i.inventario.toJSON()
+                prod_stock = int(i.inventario.producto.stock)
+                invetario_stock = int(prod_stock / i.inventario.conversion_stock)
+                if i.cantidad <= invetario_stock:
+                    item['cantidad'] = i.cantidad
+                else:
+                    item['cantidad'] = invetario_stock
+                item['descuento'] = format(i.descuento, '.2f')
                 data.append(item)
         except:
             pass
+        return data
+
+    def get_iva_empresa(self):
+        data = ''
+        try:
+            emp = Empresa.objects.get(pk=1)
+            data = emp.iva
+        except:
+            data = '0'
         return data
 
     def get_context_data(self, **kwargs):
@@ -202,16 +225,13 @@ class proforma_update_view(LoginRequiredMixin, UpdateView):
         context['entity'] = 'Proforma'
         context['list_url'] = self.success_url
         context['action'] = 'edit'
+        context['iva'] = self.get_iva_empresa()
         context['det'] = json.dumps(self.get_details_product())
         return context
 
 class proforma_factura_view(View):
     def link_callback(self, uri, rel):
-        """
-        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-        resources
-        """
-        # use short variable names
+
         sUrl = settings.STATIC_URL  # Typically /static/
         sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
         mUrl = settings.MEDIA_URL  # Typically /static/media/
@@ -235,14 +255,18 @@ class proforma_factura_view(View):
     def get(self, request, *args, **kwargs):
         try:
             template = get_template('proforma/factura.html')
+            ima = 'logo.png'
+            emp = Empresa.objects.get(pk=1)
+            if emp.imagen:
+                ima = emp.imagen
             context = {
                 'venta': Venta.objects.get(pk=self.kwargs['pk']),
-                'comp': {'name': 'ALGORISOFT S.A.', 'ruc': '9999999999999', 'address': 'Milagro, Ecuador'},
-                'icon': '{}{}'.format(settings.MEDIA_URL, 'logo.png')
+                'comp': {'name': emp.nombre, 'ruc': emp.ruc, 'correo': emp.correo,
+                         'address': emp.ciudad, 'ubicacion': emp.direccion, 'telefono': emp.telefono},
+                'icon': '{}{}'.format(settings.MEDIA_URL, ima)
             }
             html = template.render(context)
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
             pisaStatus = pisa.CreatePDF(
                 html, dest=response,
                 link_callback=self.link_callback

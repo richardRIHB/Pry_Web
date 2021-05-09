@@ -29,7 +29,7 @@ class compra_view(LoginRequiredMixin, TemplateView):
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Compra.objects.order_by('-fecha'):
+                for i in Compra.objects.order_by('-id'):
                     data.append(i.toJSON())
             elif action == 'search_detalle_producto':
                 data = []
@@ -306,7 +306,7 @@ class CompraUpdateView(LoginRequiredMixin, UpdateView):
             for i in Detalle_Compra.objects.filter(compra_id=self.get_object().id):
                 item = i.producto.toJSON()
                 item['cantidad'] = i.cantidad
-                item['precio_new'] = format(i.precio, '.2f')
+                item['precio_new'] = format(i.precio, '.3f')
                 data.append(item)
         except:
             pass

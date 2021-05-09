@@ -3,7 +3,7 @@ from datetime import datetime
 from django.forms import *
 
 from Apps.App_Facturacion.models import Cliente, Producto, Venta, Abono, Pedido, Marca, Galeria, Bloque, Proveedor, \
-    Compra, Abono_Compra, Devolucion_Compra, Empresa, Inventario
+    Compra, Abono_Compra, Devolucion_Compra, Empresa, Inventario, Devolucion, Gestion_Inventario
 from tempus_dominus.widgets import DateTimePicker
 
 class FormularioLogin(AuthenticationForm):
@@ -276,15 +276,16 @@ class abonos_form(ModelForm):
         widgets = {
 
             'fecha': DateInput(
-                format='%d/%m/%Y %I:%M',
+                #format='%d/%m/%Y %I:%M',
                 attrs={
-                    'value': datetime.now().strftime('%d/%m/%Y %I:%M '),
+                    #'value': datetime.now().strftime('%d/%m/%Y %I:%M '),
                     'autocomplete': 'off',
-                    'class': 'form-control datetimepicker-input',
+                    #'class': 'form-control datetimepicker-input',
                     'id': 'fecha',
-                    'data-target': '#fecha',
+                    #'data-target': '#fecha',
+                    'class': 'form-control',
                     'readonly': 'on',
-                    'data-toggle': 'datetimepicker',
+                    #'data-toggle': 'datetimepicker',
                 }
             ),
 
@@ -317,9 +318,6 @@ class abonos_form(ModelForm):
 class pedido_form(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # for form in self.visible_fields():
-        #     form.field.widget.attrs['class'] = 'form-control'
-        #     form.field.widget.attrs['autocomplete'] = 'off'
         self.fields['direccion'].widget.attrs['autofocus'] = True
 
     class Meta:
@@ -388,6 +386,43 @@ class pedido_form(ModelForm):
             data['error'] = str(e)
         return data
 
+class devolucion_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Devolucion
+        fields = '__all__'
+        exclude = ['user_updated', 'user_creation']
+        widgets = {
+            'venta': TextInput(
+                attrs={
+                'class': "form-control",
+                'readonly': True,
+                }
+            ),
+            'fecha': DateInput(
+                format='%d/%m/%Y %I:%M %p',
+                attrs={
+                    'value': datetime.now().strftime('%d/%m/%Y %I:%M %p'),
+                    'autocomplete': 'off',
+                    'class': 'form-control',
+                    'readonly': True,
+                }
+            ),
+            'iva': TextInput(attrs={
+                'class': 'form-control',
+                'readonly': True,
+            }),
+            'subtotal': TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            }),
+            'total': TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            }),
+        }
 
 # funcion para añadir validaciones
 # def clean(self):
@@ -746,6 +781,7 @@ class empresa_form(ModelForm):
         widgets = {
             'nombre': TextInput(
                 attrs={
+                    'autofocus': "autofocus",
                     'placeholder': 'Ingrese el nombre de la empresa',
                 }
             ),
@@ -888,3 +924,61 @@ class inventario_form(ModelForm):
         except Exception as e:
             data['error'] = str(e)
         return data
+
+class gestion_inventario_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Gestion_Inventario
+        fields = '__all__'
+        exclude = ['user_updated', 'user_creation']
+        widgets = {
+            'inventario': Select(
+                attrs={
+                    'class': "form-control select2",
+                    'style': 'width: 100%',
+                    'autofocus': "autofocus",
+                }
+            ),
+            'descripcion': Textarea(
+                attrs={
+                    'placeholder': 'Ingrese la descripcion',
+                    'class': 'form-control',
+                    'rows': 5,
+                    'cols': 4
+                }
+            ),
+            'fecha': DateInput(
+                attrs={
+                    'autocomplete': 'off',
+                    'class': 'form-control',
+                    'readonly': True,
+                }
+            ),
+            'precio': NumberInput(
+                attrs={
+                    'readonly': True,
+                    'class': 'form-control',
+                }
+            ),
+            'cantidad': TextInput(
+                attrs={
+                    'onchange': 'return calcularPVP()',
+                    'class': 'form-control',
+                }
+            ),
+            'total': NumberInput(
+                attrs={
+                    'readonly': True,
+                    'class': 'form-control',
+                }
+            ),
+            'tipo_problema': Select(
+                attrs={
+                    'class': "form-control select2",
+                    'style': 'width: 100%',
+
+                }
+            ),
+        }

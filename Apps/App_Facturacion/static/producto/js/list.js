@@ -41,9 +41,9 @@ function get_data() {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<a href="#" rel="edit" title="Editar Producto" class="btn btn-warning btn-xs btn-flat btnEdit"><i class="fas fa-edit"></i></a> ';
+                    var buttons = '<a href="#" rel="edit" title="Editar Producto" class="btn btn-warning btn-xs btnEdit"><i class="fas fa-edit"></i></a> ';
                     if (row.estado === true) {
-                        buttons += '<a href="#" rel="delete" title="Eliminar Producto" class="btn btn-danger btn-xs btn-flat btnDelete"><i class="fas fa-trash-alt"></i></a> ';
+                        buttons += '<a href="#" rel="delete" title="Eliminar Producto" class="btn btn-danger btn-xs btnDelete"><i class="fas fa-trash-alt"></i></a> ';
                     }
                     return buttons
                 }
@@ -166,8 +166,8 @@ $(function () {
     $("input[name='precio_bruto']").TouchSpin({
         min:0,
         max: 500,
-        step: 0.01,
-        decimals: 2,
+        step: 0.001,
+        decimals: 3,
         boostat: 5,
         maxboostedstep: 10,
         postfix: '$USD'

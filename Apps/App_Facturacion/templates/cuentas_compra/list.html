@@ -30,7 +30,7 @@
 {% block buttons_list %}
     <div class="card-footer">
 
-       <a href="{{ list_url }}" class="btn btn-success btn-flat">
+       <a href="{{ list_url }}" class="btn btn-success btn-sm btnTest">
         <i class="fas fa-sync"></i> Actualizar
        </a>
 
@@ -58,7 +58,12 @@
                             <input name="action" type="hidden" value="add">
                             <input name="id" id="id" type="hidden" value="0">
                             <div class="form-group" >
-                                {{ form.cuentas_compra }}
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><b>Factura N°</b></div>
+                                    </div>
+                                    {{ form.cuentas_compra }}
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Fecha de Abono:</label>

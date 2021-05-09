@@ -24,6 +24,13 @@ $(function () {
         ],
         columnDefs: [
             {
+                targets: [1],
+                orderable: false,
+                render: function (data, type, row) {
+                    return data
+                }
+            },
+            {
                 targets: [-3],
                 class: 'text-center',
                 render: function (data, type, row) {

@@ -49,7 +49,7 @@ var compra_diccionario = {
                     targets: [0],
                     orderable: false,
                     render: function (data, type, row) {
-                        data2 = data + '-' + row.descripcion
+                        data2 = data + '-' + row.marca.nombre + '-' + row.descripcion
                         html = data2.substr(0, 40);
                         return html;
                     }
@@ -59,7 +59,7 @@ var compra_diccionario = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '$'+parseFloat(data).toFixed(2);
+                        return '$'+parseFloat(data).toFixed(3);
                     }
                 },
                 {
@@ -137,7 +137,7 @@ function formatRepo(repo) {
         '<b>Factura Nº:</b> ' + repo.id + '<br>' +
         '<b>Proveedor:</b> ' + repo.proveedor.proveedor + '<br>' +
         '<b>Estado de Devolucion:</b> ' + html_d  + '<br>' +
-        '<b>Estado:</b> ' + html + '<b> &nbsp;  Total:</b> <span class="badge badge-success">' + repo.total + '</span>' +
+        '<b>Estado:</b> ' + html + '<b> &nbsp;  Total:</b> <span class="badge bg-dark">' + '$' + repo.total + '</span>' +
         '</p>' +
         '</div>' +
         '</div>' +

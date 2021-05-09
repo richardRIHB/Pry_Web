@@ -53,13 +53,14 @@ class Venta(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
     fecha = models.DateTimeField(default=datetime.now)
     iva_base = models.DecimalField(default=0.12, max_digits=3, decimal_places=2)
-    iva = models.DecimalField(default=0.12, max_digits=5, decimal_places=2)
-    subtotal = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)
-    total = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)
+    iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     metodo_pago = models.BooleanField(default=False)
     tipo_documento = models.BooleanField(default=False)
     estado = models.BooleanField(default=True)
     estado_pedido = models.BooleanField(default=False)
+    estado_devolucion = models.BooleanField(default=False)
     # Auditoria
     user_creation = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                       related_name='venta_user_creation',
@@ -87,7 +88,7 @@ class Venta(models.Model):
         item['iva'] = format(self.iva, '.2f')
         item['iva_base']=format(self.iva_base, '.2f')
         item['total'] = format(self.total, '.2f')
-        item['fecha'] = self.fecha.strftime('%x <span class="bg-blue btn-xs">%I:%M %p</span>')
+        item['fecha'] = self.fecha.strftime('%d/%m/%y <span class="bg-blue btn-xs">%I:%M %p</span>')
         for i in self.detalle_venta_set.all():
             det.append(i.toJSON())
         item['det'] = det
@@ -102,6 +103,7 @@ class Venta(models.Model):
                 self.user_updated = user
         super(Venta, self).save()
 
+
 class Pedido(models.Model):
     venta = models.OneToOneField(Venta, on_delete=models.PROTECT)
     fecha = models.DateTimeField(default=datetime.now)
@@ -112,7 +114,7 @@ class Pedido(models.Model):
     descripcion = models.TextField(blank=True, null=True, max_length=150)
     estado = models.BooleanField(default=True)
     estado_entrega = models.BooleanField(default=False)
-    total = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     # Auditoria
     user_creation = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                       related_name='pedido_user_creation',
@@ -136,8 +138,8 @@ class Pedido(models.Model):
         item = model_to_dict(self)
         item['venta'] = self.venta.toJSON()
         item['total'] = format(self.total, '.2f')
-        item['fecha'] = self.fecha.strftime('%x <span class="bg-blue btn-xs">%H:%M %p</span>')
-        item['fecha_entrega'] = self.fecha_entrega.strftime('%x <span class="bg-blue btn-xs">%H:%M %p</span>')
+        item['fecha'] = self.fecha.strftime('%d/%m/%y <span class="bg-blue btn-xs">%H:%M %p</span>')
+        item['fecha_entrega'] = self.fecha_entrega.strftime('%d/%m/%y <span class="bg-blue btn-xs">%H:%M %p</span>')
 
         return item
 
@@ -155,8 +157,8 @@ class Cuentas(models.Model):
     venta = models.OneToOneField(Venta, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=datetime.now)
     descripcion = models.TextField(blank=False, null=False)
-    valor = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)
-    saldo = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)
+    valor = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    saldo = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     estado = models.BooleanField(default=False)
     estado_venta = models.BooleanField(default=True)
 
@@ -173,14 +175,14 @@ class Cuentas(models.Model):
     def toJSON(self):
         cuentas = model_to_dict(self)
         cuentas['venta'] = self.venta.toJSON()
-        cuentas['fecha'] = self.fecha.strftime('%x <span class="bg-blue btn-xs">%H:%M %p</span>')
+        cuentas['fecha'] = self.fecha.strftime('%d/%m/%y <span class="bg-blue btn-xs">%H:%M %p</span>')
         return cuentas
 
 
 class Abono(models.Model):
     cuentas = models.ForeignKey(Cuentas, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=datetime.now)
-    valor = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)
+    valor = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     estado = models.BooleanField(default=True)
 
     # Auditoria
@@ -196,7 +198,7 @@ class Abono(models.Model):
     def toJSON(self):
         abono = model_to_dict(self)
         abono['cuentas'] = self.cuentas.toJSON()
-        abono['fecha'] = self.fecha.strftime('%x <span class="bg-blue btn-xs">%H:%M %p</span>')
+        abono['fecha'] = self.fecha.strftime('%d/%m/%y <span class="bg-blue btn-xs">%H:%M %p</span>')
         return abono
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -246,7 +248,6 @@ class Marca(models.Model):
             else:
                 self.user_updated = user
         super(Marca, self).save()
-
 
 # Bloque, Seccion y Posicion pertenecen a un mismo Modulo - Modulo Ubicacion
 class Bloque(models.Model):
@@ -366,7 +367,7 @@ class Posicion(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=30)
     descripcion = models.TextField(max_length=200)
-    precio = models.DecimalField(default=0.00, max_digits=5, decimal_places=2, verbose_name='PVP')
+    precio = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='PVP')
     marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
     bloque = models.ForeignKey(Bloque, on_delete=models.CASCADE)
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
@@ -379,7 +380,7 @@ class Producto(models.Model):
     iva = models.DecimalField(default=0.12, max_digits=3, decimal_places=2)
     porcentaje_ganancia = models.DecimalField(default=0.00, max_digits=5, decimal_places=2,
                                               verbose_name='Porcentaje de Ganancia')
-    precio_bruto = models.DecimalField(default=0.00, max_digits=5, decimal_places=2, verbose_name='Precio Base')
+    precio_bruto = models.DecimalField(default=0.00, max_digits=7, decimal_places=3, verbose_name='Precio Base')
 
     # Auditoria
     user_creation = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
@@ -415,7 +416,7 @@ class Producto(models.Model):
         item['imagen'] = self.get_image()
         item['precio'] = format(self.precio, '.2f')
         item['iva'] = format(self.iva, '.2f')
-        item['precio_bruto'] = format(self.precio_bruto, '.2f')
+        item['precio_bruto'] = format(self.precio_bruto, '.3f')
         item['porcentaje_ganancia'] = format(self.porcentaje_ganancia, '.2f')
         return item
 
@@ -427,6 +428,7 @@ class Producto(models.Model):
             else:
                 self.user_updated = user
         super(Producto, self).save()
+
 
 class Inventario(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
@@ -474,6 +476,54 @@ class Inventario(models.Model):
             else:
                 self.user_updated = user
         super(Inventario, self).save()
+
+
+class Gestion_Inventario(models.Model):
+    inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+    descripcion = models.TextField(max_length=200)
+    fecha = models.DateField(default=datetime.now)
+    precio = models.DecimalField(default=0.000, max_digits=9, decimal_places=3)
+    cantidad = models.IntegerField(default=1)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    tipo_problema = models.IntegerField()
+    tipo_gestion = models.BooleanField(default=True)
+    estado = models.BooleanField(default=True)
+
+    # Auditoria
+    user_creation = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                      related_name='gestion_invnetario_user_creation',
+                                      null=True, blank=True)
+    date_creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    user_updated = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                     related_name='gestion_inventario_user_updated',
+                                     null=True, blank=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Gestion Inventario"
+        verbose_name_plural = "Gestion Inventario"
+        db_table = 'gestion_inventario'
+        ordering = ['id']
+
+    def __str__(self):
+        return self.inventario.producto.nombre
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['user_creation', 'user_updated'])
+        item['inventario'] = self.inventario.toJSON()
+        item['fecha'] = self.fecha.strftime('%d/%m/%Y')
+        item['precio'] = format(self.precio, '.3f')
+        item['total'] = format(self.total, '.2f')
+        return item
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        user = get_current_user()
+        if user is not None:
+            if not self.pk:
+                self.user_creation = user
+            else:
+                self.user_updated = user
+        super(Gestion_Inventario, self).save()
 
 
 class Galeria(models.Model):
@@ -553,7 +603,89 @@ class Detalle_Venta(models.Model):
         item = model_to_dict(self, exclude=['venta'])
         item['inventario'] = self.inventario.toJSON()
         item['precio'] = format(self.precio, '.2f')
+        item['descuento'] = format(self.descuento, '.2f')
         item['subtotal'] = format(self.total, '.2f')
+        return item
+
+
+class Devolucion(models.Model):
+    venta = models.OneToOneField(Venta, on_delete=models.PROTECT)
+    fecha = models.DateTimeField(default=datetime.now)
+    iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    estado = models.BooleanField(default=True)
+    # Auditoria
+    user_creation = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                      related_name='devolucion_user_creation',
+                                      null=True, blank=True)
+    date_creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    user_updated = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                     related_name='devolucion_user_updated',
+                                     null=True, blank=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Devolucion"
+        verbose_name_plural = "Devoluciones"
+        db_table = 'devolucion'
+        ordering = ['id']
+
+    def __str__(self):
+        return self.venta.cliente.nombre
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['user_creation', 'user_updated'])
+        item['venta'] = self.venta.toJSON()
+        item['iva'] = format(self.iva, '.2f')
+        item['subtotal'] = format(self.subtotal, '.2f')
+        item['total'] = format(self.total, '.2f')
+        item['fecha'] = self.fecha.strftime('%d/%m/%y <span class="bg-blue btn-xs">%I:%M %p</span>')
+        return item
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        user = get_current_user()
+        if user is not None:
+            if not self.pk:
+                self.user_creation = user
+            else:
+                self.user_updated = user
+        super(Devolucion, self).save()
+
+
+class Devolucion_Detalle_Venta(models.Model):
+    devolucion = models.ForeignKey(Devolucion, on_delete=models.CASCADE)
+    inventario = models.ForeignKey(Inventario, on_delete=models.PROTECT)
+    cantidad = models.IntegerField()
+    descuento = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    precio = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+
+    # Auditoria
+    user_creation = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                      related_name='devolucion_detalle_user_creation',
+                                      null=True, blank=True)
+    date_creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    user_updated = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                     related_name='devolucion_detalle_user_updated',
+                                     null=True, blank=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Item"
+        verbose_name_plural = "Items"
+        db_table = 'devolucion_detalle'
+        ordering = ['id']
+
+    def __str__(self):
+        return self.inventario.producto.nombre
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['devolucion'])
+        item['inventario'] = self.inventario.toJSON()
+        item['precio'] = format(self.precio, '.2f')
+        item['descuento'] = format(self.descuento, '.2f')
+        item['subtotal'] = format(self.subtotal, '.2f')
         return item
 
 
@@ -656,7 +788,7 @@ class Compra(models.Model):
 class Detalle_Compra(models.Model):
     compra = models.ForeignKey(Compra, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    precio = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)  # Precio bruto de Compra
+    precio = models.DecimalField(default=0.00, max_digits=6, decimal_places=3)  # Precio bruto de Compra
     precio_antiguo = models.DecimalField(default=0.00, max_digits=5, decimal_places=2)  # Precio bruto antiguo
     cantidad = models.IntegerField(default=0)
     subtotal = models.DecimalField(default=0.00, max_digits=6, decimal_places=2)
@@ -683,7 +815,7 @@ class Detalle_Compra(models.Model):
     def toJSON(self):
         item = model_to_dict(self, exclude=['compra'])
         item['producto'] = self.producto.toJSON()
-        item['precio'] = format(self.precio, '.2f')
+        item['precio'] = format(self.precio, '.3f')
         item['cantidad'] = format(self.cantidad, '.2f')
         item['subtotal'] = format(self.subtotal, '.2f')
         return item
@@ -827,7 +959,7 @@ class Devolucion_Compra(models.Model):
 class Devolucion_Detalle_Compra(models.Model):
     devolucion_compra = models.ForeignKey(Devolucion_Compra, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    precio = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    precio = models.DecimalField(default=0.00, max_digits=9, decimal_places=3)
     cantidad = models.IntegerField(default=0)
     subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     precio_antiguo_ddc = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
@@ -853,7 +985,7 @@ class Devolucion_Detalle_Compra(models.Model):
     def toJSON(self):
         item = model_to_dict(self, exclude=['devolucion_compra'])
         item['producto'] = self.producto.toJSON()
-        item['precio'] = format(self.precio, '.2f')
+        item['precio'] = format(self.precio, '.3f')
         item['cantidad'] = format(self.cantidad, '.2f')
         item['subtotal'] = format(self.subtotal, '.2f')
         return item

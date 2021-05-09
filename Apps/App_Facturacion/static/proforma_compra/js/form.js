@@ -65,9 +65,9 @@ var compra_diccionario = {
                     targets: [1],
                     orderable: false,
                     render: function (data, type, row) {
-                        data2 = data + ' (' + row.descripcion
+                        data2 = data + '-' + row.marca.nombre + '-' + row.descripcion
                         html = data2.substr(0, 50);
-                        return html + ')';
+                        return html;
                     }
                 },
                 {
@@ -75,7 +75,7 @@ var compra_diccionario = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '$'+parseFloat(data).toFixed(2);
+                        return '$'+parseFloat(data).toFixed(3);
 
                     }
                 },
@@ -137,10 +137,9 @@ function formatRepo(repo) {
         '<img src="' + repo.imagen + '" class="img-fluid img-thumbnail d-block mx-auto rounded">' +
         '</div>' +
         '<div class="col-lg-11 text-left shadow-sm">' +
-        //'<br>' +
         '<p style="margin-bottom: 0;">' +
-        '<b>Nombre:</b> ' + repo.nombre + '(' + repo.descripcion + ')' + '<br>' +
-        '<b>Marca:</b> <span class="badge badge-info">' + repo.marca.nombre + '</span>' + '<br>' +
+        repo.nombre + ' ' + repo.descripcion.substr(0, 70) + '<br>' +
+        '<b>Marca:</b> <span class="badge bg-dark">' + repo.marca.nombre + '</span>' + ' ' +
         '<b>Estado:</b> ' + html +
         '</p>' +
         '</div>' +
@@ -155,7 +154,14 @@ function formatRepo_proveedor(repo) {
         return repo.text;
     }
 
-    var html = '<span  class="badge badge-success" >' + repo.empresa + '</span>'
+    var estado = 'Bloqueado'
+    var html1 = '&nbsp<span  class="badge badge-warning" >' + estado + '</span>'
+    if (repo.estado === true) {
+        estado = 'Activo'
+        html1 = '&nbsp<span  class="badge badge-success" >' + estado + '</span>'
+    }
+
+    var html = '<span  class="badge badge-dark" >' + repo.empresa + '</span>'
 
     var option = $(
         '<div class="wrapper container">' +
@@ -167,8 +173,8 @@ function formatRepo_proveedor(repo) {
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
         '<b>Nombre:</b> ' + repo.proveedor + '<br>' +
-        '<b>Cedula:</b> ' + repo.c_i + '<br>' +
-        '<b>Empresa:</b> ' + html +
+        '<b>C.I:</b> ' + repo.c_i + '<br>' +
+        '<b>Empresa:</b> ' + html +' '+ html1 +
         '</p>' +
         '</div>' +
         '</div>' +

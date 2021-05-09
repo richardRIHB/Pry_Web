@@ -113,14 +113,28 @@ $(function () {
                 },
                 columns: [
                     {"data": "producto.nombre"},
-                    {"data": "producto.descripcion"},
                     {"data": "precio"},
                     {"data": "cantidad"},
                     {"data": "subtotal"},
                 ],
                 columnDefs: [
                     {
-                        targets: [-1,-3],
+                        targets: [0],
+                        render: function (data, type, row) {
+                             html = data+' '+row.producto.marca.nombre+' '+row.producto.descripcion;
+                             html = html.substr(0, 85);
+                            return html;
+                        }
+                    },
+                    {
+                        targets: [-3],
+                        class: 'text-center',
+                        render: function (data, type, row) {
+                            return '$' + parseFloat(data).toFixed(3);
+                        }
+                    },
+                    {
+                        targets: [-1],
                         class: 'text-center',
                         render: function (data, type, row) {
                             return '$' + parseFloat(data).toFixed(2);

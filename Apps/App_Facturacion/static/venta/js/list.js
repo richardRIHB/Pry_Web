@@ -1,5 +1,4 @@
 function format(d) {
-    console.log(d);
     var html = '<table class="table">';
     html += '<thead class="thead-dark">';
     html += '<tr><th scope="col">Producto</th>';
@@ -24,7 +23,7 @@ function format(d) {
 
 $(function () {
     tblSale = $('#data').DataTable({
-        // responsive: true,
+        responsive: true,
         scrollX: true,
         autoWidth: false,
         destroy: true,
@@ -39,16 +38,7 @@ $(function () {
             dataSrc: ""
         },
         columns: [
-            // {
-            //     "orderable": false,
-            //     "className": 'details-control',
-            //     "data": null,
-            //     "defaultContent": '',
-            //
-            // },
-            {
-                "data": "id",
-            },
+            {"data": "id"},
             {"data": "cliente.cliente"},
             {"data": "fecha"},
             {"data": "total"},
@@ -58,7 +48,13 @@ $(function () {
 
         ],
         columnDefs: [
-
+            {
+                targets: [1],
+                orderable: false,
+                render: function (data, type, row) {
+                    return data;
+                }
+            },
             {
                 targets: [-4],
                 class: 'text-center',
@@ -99,8 +95,6 @@ $(function () {
                 targets: [-1],
                 class: 'text-left',
                 orderable: false,
-
-
                 render: function (data, type, row) {
                     var buttons = '<a rel="details" class="bg-success btn-xs"><i class="fas fa-search"></i> Items</a> ';
                     if (row.estado === true) {
@@ -128,8 +122,11 @@ $(function () {
 
             var tr = tblSale.cell($(this).closest('td, li')).index();
             var data = tblSale.row(tr.row).data();
-            console.log(data);
             var parameters = new FormData();
+            if(data.estado_devolucion === true){
+                message_error('No se puede anular la Factura Nº '+' <span  class="badge badge-success" > '+ data.id + '</span>'+' debido a que se encuentra registrado en el Modulo Devoluciones')
+                return false;
+            }
             parameters.append('action', 'anular');
             parameters.append('id', data.id);
 
@@ -142,14 +139,13 @@ $(function () {
 
             var tr = tblSale.cell($(this).closest('td, li')).index();
             var data = tblSale.row(tr.row).data();
-            console.log(data);
 
             $('#tblDet').DataTable({
                 responsive: true,
                 autoWidth: false,
                 destroy: true,
                 deferRender: true,
-                //data: data.det,
+                order: [],
                 ajax: {
                     url: window.location.pathname,
                     type: 'POST',
@@ -163,12 +159,14 @@ $(function () {
                     {"data": "inventario.producto.nombre"},
                     {"data": "inventario.medida"},
                     {"data": "precio"},
+                    {"data": "descuento"},
                     {"data": "cantidad"},
                     {"data": "subtotal"},
                 ],
                 columnDefs: [
                     {
                         targets: [0],
+                        orderable: false,
                         render: function (data, type, row) {
                             html=data+' '+row.inventario.producto.marca.nombre+' '+row.inventario.producto.descripcion;
                             html = html.substr(0, 66);
@@ -176,8 +174,17 @@ $(function () {
                         }
                     },
                     {
-                        targets: [-1, -3],
+                        targets: [1],
                         class: 'text-center',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: [-1,-3,-4],
+                        class: 'text-center',
+                        orderable: false,
                         render: function (data, type, row) {
                             return '$' + parseFloat(data).toFixed(2);
                         }
@@ -185,6 +192,7 @@ $(function () {
                     {
                         targets: [-2],
                         class: 'text-center',
+                        orderable: false,
                         render: function (data, type, row) {
 
                             return '<span  class="badge badge-success" >' + data + '</span>';
@@ -216,7 +224,7 @@ $(function () {
             var data = tblSale.row(tr.row).data();
             modal_title.find('span').html('Creación de un Pedido');
             modal_title.find('i').removeClass().addClass('fas fa-plus');
-            $('input[name="fecha_entrega"]').val( moment().format("DD-MM-YYYY HH:mm A"));
+            $('input[name="fecha_entrega"]').val(moment().format("DD-MM-YYYY HH:mm A"));
             $('#id_fecha_entrega').datetimepicker({
                 format: 'DD-MM-YYYY HH:mm A',
                 date: moment().format("YYYY-MM-DD HH:mm "),

@@ -36,13 +36,17 @@ function get_data() {
 $(function () {
     get_data()
     $("input[name='iva']").TouchSpin({
-        min:0,
+        min:0.01,
         max: 0.15,
         step: 0.01,
         decimals: 2,
         boostat: 5,
         maxboostedstep: 10,
         postfix: '%'
+    }).on('change', function () {
+        if (isNaN(parseFloat($(this).val()))) {
+            $(this).val(0.01);
+        }
     })
 
     $('form').on('submit', function (e) {
@@ -68,7 +72,7 @@ function validarInputFile() {
     var archivoInput = document.getElementById('id_imagen');
     var accion = $('input[name="action"]').val()
     var archivoRuta = archivoInput.value;
-    var extencionesPermitidas = /(.png|.PNG|.jpg)$/i;
+    var extencionesPermitidas = /(.png|.PNG|.jpg|.JPEG)$/i;
 
     if (!extencionesPermitidas.exec(archivoRuta)) {
         Swal.fire({
@@ -78,7 +82,7 @@ function validarInputFile() {
         });
         archivoInput.value = '';
         document.getElementById('visorArchivo').innerHTML =
-            '<img src="' + imag + '" alt="Mi imagen" id="miImagen" width="100%" height="180" border=50px>'
+            '<img src="' + imag + '" alt="Mi imagen" id="miImagen" width="100%" height="164" border=50px>'
 
         return false;
     } else {
@@ -86,7 +90,7 @@ function validarInputFile() {
             var visor = new FileReader();
             visor.onload = function (e) {
                 document.getElementById('visorArchivo').innerHTML =
-                    '<img src="' + e.target.result + '" alt="Mi imagen" id="miImagen" width="100%" height="180" border=50px>'
+                    '<img src="' + e.target.result + '" alt="Mi imagen" id="miImagen" width="100%" height="164" border=50px>'
             };
             visor.readAsDataURL(archivoInput.files[0]);
         }
@@ -96,7 +100,7 @@ function validarInputFile() {
 function validarInputFile_logo() {
     var archivoInput = document.getElementById('id_logo_login');
     var archivoRuta = archivoInput.value;
-    var extencionesPermitidas = /(.png|.PNG|.jpg)$/i;
+    var extencionesPermitidas = /(.png|.PNG|.jpg|.JPEG)$/i;
 
     if (!extencionesPermitidas.exec(archivoRuta)) {
         Swal.fire({
@@ -106,7 +110,7 @@ function validarInputFile_logo() {
         });
         archivoInput.value = '';
         document.getElementById('visorArchivo_logo').innerHTML =
-            '<img src="' + imag2 + '" alt="Mi imagen" id="miImagen2" width="100%" height="180" border=50px>'
+            '<img src="' + imag2 + '" alt="Mi imagen" id="miImagen2" width="100%" height="250" border=50px>'
 
         return false;
     } else {
@@ -114,7 +118,7 @@ function validarInputFile_logo() {
             var visor = new FileReader();
             visor.onload = function (e) {
                 document.getElementById('visorArchivo_logo').innerHTML =
-                    '<img src="' + e.target.result + '" alt="Mi imagen" id="miImagen2" width="100%" height="180" border=50px>'
+                    '<img src="' + e.target.result + '" alt="Mi imagen" id="miImagen2" width="100%" height="250" border=50px>'
             };
             visor.readAsDataURL(archivoInput.files[0]);
         }
@@ -125,7 +129,7 @@ function validarInputFile_logo() {
 function mostarElemetosFormModal(ima, ima2) {
     //agg informacion
     document.getElementById('visorArchivo').innerHTML =
-        '<img src="' + ima + '" alt="Mi imagen" id="miImagen" width="100%" height="180" border=50px>'
+        '<img src="' + ima + '" alt="Mi imagen" id="miImagen" width="100%" height="164" border=50px>'
     document.getElementById('visorArchivo_logo').innerHTML =
-        '<img src="' + ima2 + '" alt="Mi imagen" id="miImagen2" width="100%" height="180" border=50px>'
+        '<img src="' + ima2 + '" alt="Mi imagen" id="miImagen2" width="100%" height="250" border=50px>'
 }

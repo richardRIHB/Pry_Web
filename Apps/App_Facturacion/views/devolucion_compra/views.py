@@ -114,21 +114,22 @@ class devolucion_compra_create_view(LoginRequiredMixin, CreateView):
                 item = ''
                 prod = []
                 if request.POST['term'].isdigit() == True:
-                    comp = Compra.objects.filter(pk=request.POST['term'])[0:10]
-                    for i in comp:
-                        item = i.toJSON()
-                        item['text'] = i.id
-                        for a in Detalle_Compra.objects.filter(compra_id=i.id):
-                            pro = a.producto.toJSON()
-                            pro['cantidad'] = a.cantidad
-                            pro['precio_new'] = format(a.precio, '.2f')
-                            pro['precio_antiguo'] = format(a.precio_antiguo, '.2f')
-                            pro['estado_devolucion'] = False
-                            pro['cantidad_inicial'] = "0"
-                            pro['subtotal'] = "0.00"
-                            prod.append(pro)
-                    item['produc'] = prod
-                    data.append(item)
+                    if Compra.objects.filter(pk=request.POST['term']).exists():
+                        comp = Compra.objects.filter(pk=request.POST['term'])[0:10]
+                        for i in comp:
+                            item = i.toJSON()
+                            item['text'] = i.id
+                            for a in Detalle_Compra.objects.filter(compra_id=i.id):
+                                pro = a.producto.toJSON()
+                                pro['cantidad'] = a.cantidad
+                                pro['precio_new'] = format(a.precio, '.3f')
+                                pro['precio_antiguo'] = format(a.precio_antiguo, '.2f')
+                                pro['estado_devolucion'] = False
+                                pro['cantidad_inicial'] = "0"
+                                pro['subtotal'] = "0.00"
+                                prod.append(pro)
+                        item['produc'] = prod
+                        data.append(item)
             elif action == 'add':
                 compra_diccionario = json.loads(request.POST['compra_diccionario'])
                 contador = 0

@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from django.views.generic import CreateView, ListView, DeleteView, UpdateView, TemplateView
+from django.views.generic import CreateView, ListView, UpdateView
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A6
 from reportlab.lib.units import cm
@@ -24,6 +24,7 @@ from reportlab.pdfgen import canvas
 from django.views.generic import View
 from django.conf import settings
 from io import BytesIO
+
 
 class venta_list_view(LoginRequiredMixin, ListView):
     model = Venta
@@ -99,6 +100,7 @@ class venta_list_view(LoginRequiredMixin, ListView):
         context['list_url'] = reverse_lazy('App_Facturacion:venta_list')
         context['proforma_url'] = reverse_lazy('App_Facturacion:proforma_list')
         context['pedido_url'] = reverse_lazy('App_Facturacion:pedido_list')
+        context['devolucion_url'] = reverse_lazy('App_Facturacion:devolucion_list')
         context['entity'] = 'Ventas'
         context['form'] = pedido_form
         context['date_now'] = datetime.now
@@ -138,7 +140,6 @@ class venta_create_view(LoginRequiredMixin, CreateView):
                     venta.metodo_pago = bool(vents['metodo_pago'])
                     venta.iva_base = request.POST['iva_base']
                     venta.save()
-                    print(vents)
                     if venta.metodo_pago:
                         cuentas=Cuentas()
                         cuentas.venta_id = venta.id
@@ -157,6 +158,8 @@ class venta_create_view(LoginRequiredMixin, CreateView):
                         det.save()
                         pro = i['producto']
                         pro = Producto.objects.get(id=pro['id'])
+                        if (float(i['conversion_stock'])*det.cantidad) > float(pro.stock):
+                            raise Exception("Stock insuficiente: "+pro.nombre +' '+pro.marca.nombre+' '+i['medida'])
                         pro.stock = float(pro.stock) - (float(i['conversion_stock'])*det.cantidad)
                         pro.save(update_fields=["stock"])
                     data = {'id': venta.id}
@@ -176,7 +179,6 @@ class venta_create_view(LoginRequiredMixin, CreateView):
                     if formulario.is_valid():
                         formulario.save()
                         cli = Cliente.objects.get(c_i=request.POST['c_i'])
-                        print(cli)
                         cliente = cli.toJSON()
                         cliente['text'] = cli.get_full_name()
                         data = cliente
@@ -225,45 +227,68 @@ class venta_update_view(LoginRequiredMixin, UpdateView):
             action = request.POST['action']
             if action == 'search_products':
                 data = []
-                prods = Producto.objects.filter(nombre__icontains=request.POST['term'])[0:10]
-                for i in prods:
+                list_invt = Inventario.objects.filter(Q(producto__nombre__icontains=request.POST['term'])|Q(producto__descripcion__icontains=request.POST['term'])|Q(producto__marca__nombre__icontains=request.POST['term']))[0:10]
+                for i in list_invt:
                     item = i.toJSON()
-                    item['value'] = i.nombre
+                    item['value'] = i.producto.nombre
                     data.append(item)
             elif action == 'edit':
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
-                    # venta = Sale.objects.get(pk=self.get_object().id)
                     venta = self.get_object()
-                    venta.fecha = vents['fecha']
-                    print(venta.fecha)
                     venta.cliente_id = vents['cliente']
                     venta.subtotal = float(vents['subtotal'])
                     venta.iva = float(vents['iva'])
                     venta.total = float(vents['total'])
                     venta.metodo_pago = bool(vents['metodo_pago'])
                     venta.tipo_documento = False
+                    venta.iva_base = request.POST['iva_base']
+                    venta.fecha = datetime.now()
                     venta.save()
+                    if venta.metodo_pago:
+                        cuentas = Cuentas()
+                        cuentas.venta_id = venta.id
+                        cuentas.valor = venta.total
+                        cuentas.saldo = venta.total
+                        cuentas.descripcion = vents['descripcion']
+                        cuentas.save()
                     venta.detalle_venta_set.all().delete()
-
                     for i in vents['products']:
                         det = Detalle_Venta()
                         det.venta_id = venta.id
-                        det.producto_id = i['id']
+                        det.inventario_id = i['id']
                         det.cantidad = int(i['cantidad'])
-                        det.precio = float(i['precio'])
+                        det.precio = float(i['pvp_medida'])
                         det.total = float(i['subtotal'])
+                        det.descuento = float(i['descuento'])
                         det.save()
-                        pro = Producto.objects.get(id=i['id'])
-                        pro.stock = int(pro.stock) - int(i['cantidad'])
+                        pro = i['producto']
+                        pro = Producto.objects.get(id=pro['id'])
+                        if (float(i['conversion_stock'])*det.cantidad) > float(pro.stock):
+                            raise Exception("Stock insuficiente: "+pro.nombre +' '+pro.marca.nombre+' '+i['medida'])
+                        pro.stock = float(pro.stock) - (float(i['conversion_stock']) * det.cantidad)
                         pro.save(update_fields=["stock"])
                     data = {'id': venta.id}
             elif action == 'search_clientes':
                 data = []
-                list_cli = Cliente.objects.filter(nombre__icontains=request.POST['term'])[0:10]
+                list_cli = Cliente.objects.filter(
+                    Q(nombre__icontains=request.POST['term']) | Q(apellido__icontains=request.POST['term']) | Q(
+                        c_i__icontains=request.POST['term']))[0:10]
                 for i in list_cli:
                     cli = i.toJSON()
+                    cli['text'] = i.get_full_name()
                     data.append(cli)
+            elif action == 'add_cliente':
+                with transaction.atomic():
+                    formulario = cliente_form(request.POST)
+                    if formulario.is_valid():
+                        formulario.save()
+                        cli = Cliente.objects.get(c_i=request.POST['c_i'])
+                        cliente = cli.toJSON()
+                        cliente['text'] = cli.get_full_name()
+                        data = cliente
+                    else:
+                        data['error'] = formulario.errors
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
@@ -274,19 +299,48 @@ class venta_update_view(LoginRequiredMixin, UpdateView):
         data = []
         try:
             for i in Detalle_Venta.objects.filter(venta_id=self.get_object().id):
-                item = i.producto.toJSON()
-                item['cantidad'] = i.cantidad
+                item = i.inventario.toJSON()
+                prod_stock = int(i.inventario.producto.stock)
+                invetario_stock = int(prod_stock / i.inventario.conversion_stock)
+                if i.cantidad <= invetario_stock:
+                    item['cantidad'] = i.cantidad
+                else:
+                    item['cantidad'] = invetario_stock
+                item['descuento'] = format(i.descuento, '.2f')
+
+                pvp_bruto_iva = float(i.inventario.producto.precio_bruto) * float((i.inventario.producto.iva)+1)
+                if i.inventario.tipo_conversion:
+                    pvp_bruto_iva = float(pvp_bruto_iva) * float(i.inventario.equivalencia)
+                else:
+                    pvp_bruto_iva = float(pvp_bruto_iva) / float(i.inventario.equivalencia)
+                pvp = float(i.inventario.pvp_medida) - float(i.descuento)
+                if pvp < pvp_bruto_iva:
+                    desc_max = float(i.inventario.pvp_medida) - float(pvp_bruto_iva)
+                    item['descuento'] = format(desc_max, '.2f')
+                else:
+                    item['descuento'] = format(i.descuento, '.2f')
                 data.append(item)
         except:
             pass
         return data
 
+    def get_iva_empresa(self):
+        data = ''
+        try:
+            emp = Empresa.objects.get(pk=1)
+            data = emp.iva
+        except:
+            data = '0'
+        return data
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edición de una Venta'
+        context['title'] = 'Facturacion de una Venta'
         context['entity'] = 'Ventas'
         context['list_url'] = self.success_url
         context['action'] = 'edit'
+        context['iva'] = self.get_iva_empresa()
+        context['frm_cliente'] = cliente_form()
         context['det'] = json.dumps(self.get_details_product())
         return context
 
@@ -376,11 +430,7 @@ class venta_report_view_2(View):
 
 class venta_factura_view(View):
     def link_callback(self, uri, rel):
-        """
-        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-        resources
-        """
-        # use short variable names
+
         sUrl = settings.STATIC_URL  # Typically /static/
         sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
         mUrl = settings.MEDIA_URL  # Typically /static/media/
@@ -425,7 +475,6 @@ class venta_factura_view(View):
             }
             html = template.render(context)
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
             pisaStatus = pisa.CreatePDF(
                 html, dest=response,
                 link_callback=self.link_callback

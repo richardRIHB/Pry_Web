@@ -4,8 +4,8 @@
 
 {% block head_list %}
     <script src="{% static 'venta/js/list.js' %}"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+{#    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"#}
+{#          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">#}
     <link href="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
     <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
 
@@ -17,14 +17,13 @@
 
 {% block columns %}
     <tr>
-        {#        <th scope="col">Items</th>#}
         <th scope="col" style="width: 5%">Nª</th>
         <th scope="col" style="width: 15%">Cliente</th>
         <th scope="col" style="width: 15%">Fecha de registro</th>
         <th scope="col" style="width: 15%">Total</th>
         <th scope="col" style="width: 15%">Estado</th>
         <th scope="col" style="width: 15%">T-Documento</th>
-        <th scope="col" style="width: 15%" align="right">Opciones</th>
+        <th scope="col" style="width: 15%">Opciones</th>
     </tr>
 {% endblock %}
 
@@ -37,14 +36,17 @@
         <a href="{{ create_url }}" class="btn btn-primary btn-sm btnTest">
             <i class="fas fa-plus"></i> Nuevo registro
         </a>
-        <a href="{{ list_url }}" class="btn btn-success btn-sm">
+        <a href="{{ list_url }}" class="btn btn-success btn-sm btnTest">
             <i class="fas fa-sync"></i> Actualizar
         </a>
         <div class="float-right">
-            <a href="{{ pedido_url }}" class="btn btn-warning btn-sm ">
+            <a href="{{ devolucion_url }}" class="btn bg-gray btn-sm btnTest">
+                <i class="fas fa-list"></i> Devoluciones
+            </a>
+            <a href="{{ pedido_url }}" class="btn btn-warning btn-sm btnTest">
                 <i class="fas fa-list"></i> Pedidos
             </a>
-            <a href="{{ proforma_url }}" class="btn btn-success btn-sm ">
+            <a href="{{ proforma_url }}" class="btn btn-primary btn-sm btnTest">
                 <i class="fas fa-list"></i> Proforma
             </a>
         </div>
@@ -73,6 +75,7 @@
                             <th>Producto</th>
                             <th>Medida</th>
                             <th>PVP</th>
+                            <th>Descuento</th>
                             <th>Cantidad</th>
                             <th>Subtotal</th>
                         </tr>

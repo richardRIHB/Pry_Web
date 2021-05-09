@@ -15,11 +15,12 @@ var vents = {
         var iva = $('input[name="iva"]').val();
         $.each(this.items.products, function (pos, dict) {
             dict.pos = pos;
-            dict.subtotal = dict.cantidad * parseFloat(dict.precio);
+            pvp_item = parseFloat(dict.pvp_medida).toFixed(2) - parseFloat(dict.descuento);
+            dict.subtotal = parseFloat(pvp_item).toFixed(2) * dict.cantidad;
             subtotal += dict.subtotal;
         });
 
-        this.items.subtotal = subtotal / ((1.12 / 0.12) * iva);
+        this.items.subtotal = parseFloat(subtotal) / (parseFloat(iva) + 1);
         this.items.iva = this.items.subtotal * iva;
         this.items.total = subtotal;
 
@@ -28,8 +29,22 @@ var vents = {
         $('input[name="total"]').val(this.items.total.toFixed(2));
     },
     add: function (item) {
-        this.items.products.push(item);
-        this.list();
+        var aux = false;
+        $.each(this.items.products, function (pos, dict) {
+            dict.pos = pos;
+            if (dict.id === item.id) {
+                Swal.fire('Notificación', '<strong>ITEM YA AGREGADO:  </strong> Verificar lista de ITEMS');
+                aux = true;
+            }
+        });
+        stock_r = parseInt(item.producto.stock)
+        cant_real = stock_r / item.conversion_stock
+        if (parseInt(cant_real)>=1 && aux === false){
+            this.items.products.push(item);
+            this.list();
+        } else if(parseInt(cant_real)<1) {
+            Swal.fire('Notificación', '<strong>STOCK INSUFICIENTE:  </strong> Verificar el STOCK');
+        }
     },
     list: function () {
         this.calculate_invoice();
@@ -37,15 +52,16 @@ var vents = {
             responsive: true,
             autoWidth: false,
             destroy: true,
+            order: [],
             data: this.items.products,
             columns: [
-                {"data": "id"},
-                {"data": "nombre"},
-                {"data": "descripcion"},
-                {"data": "precio"},
-                {"data": "stock"},
                 {"data": "cantidad"},
+                {"data": "producto.nombre"},
+                {"data": "pvp_medida"},
+                {"data": "producto.stock"},
+                {"data": "descuento"},
                 {"data": "subtotal"},
+                {"data": "id"},
             ],
             columnDefs: [
                 {
@@ -53,50 +69,75 @@ var vents = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<a rel="remove" class="btn btn-danger btn-xs btn-flat" style="color: white;"><i class="fas fa-trash-alt"></i></a>';
-                    }
-                },
-                {
-                    targets: [-4],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '$' + parseFloat(data).toFixed(2);
-                    }
-                },
-                {
-                    targets: [-3],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '<input type="text" name="stock" class="form-control form-control-sm input-sm" autocomplete="off" value="' + parseInt(data) + '" hidden>' + '<span  class="badge badge-success" id="stock" >' + parseInt(data) + '</span>'
-                    }
-                },
-                {
-                    targets: [-2],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
                         return '<input type="text" name="cant" class="form-control form-control-sm input-sm" autocomplete="off" value="' + row.cantidad + '">';
                     }
                 },
                 {
-                    targets: [-1],
+                    targets: [1],
+                    orderable: false,
+                    render: function (data, type, row) {
+                        html = data + ' - ' + row.producto.marca.nombre + ' - ' + row.medida
+                        return html;
+                    }
+                },
+                {
+                    targets: [2],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        pvp_item = parseFloat(data).toFixed(2) - parseFloat(row.descuento);
+                        return '$' + parseFloat(pvp_item).toFixed(2);
+                    }
+                },
+                {
+                    targets: [3],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        stock_r = parseInt(data)
+                        cant_real = stock_r / row.conversion_stock
+                        return '<input type="text" name="stock" class="form-control form-control-sm input-sm" autocomplete="off" value="' + parseInt(data) + '" hidden>' + '<span  class="badge badge-success" id="stock" >' + parseInt(cant_real) + '</span>'
+                    }
+                },
+                {
+                    targets: [4],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="text" name="desc" class="form-control form-control-sm input-sm" autocomplete="off" value="' + row.descuento + '">';
+                    }
+                },
+                {
+                    targets: [5],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
                         return '$' + parseFloat(data).toFixed(2);
                     }
                 },
+                {
+                    targets: [6],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<a rel="remove" class="btn btn-danger btn-xs " style="color: white;"><i class="fas fa-trash-alt"></i></a>';
+                    }
+                },
             ],
             rowCallback(row, data, displayNum, displayIndex, dataIndex) {
-
+                stock_r = parseInt(data.producto.stock)
+                cant_real = stock_r / data.conversion_stock
                 $(row).find('input[name="cant"]').TouchSpin({
                     min: 1,
-                    max: 1000000000,
+                    max: parseInt(cant_real),
                     step: 1
                 });
-
+                $(row).find('input[name="desc"]').TouchSpin({
+                    min: 0.00,
+                    decimals: 2,
+                    max: 1000,
+                    step: 0.01
+                });
             },
             initComplete: function (settings, json) {
 
@@ -109,19 +150,21 @@ function formatRepo(repo) {
     if (repo.loading) {
         return repo.text;
     }
-
+    stock_r = parseInt(repo.producto.stock)
+    cant_real = stock_r / repo.conversion_stock
     var option = $(
         '<div class="wrapper container">' +
         '<div class="row">' +
         '<div class="col-lg-1">' +
-        '<img src="' + repo.imagen + '" class="img-fluid img-thumbnail d-block mx-auto rounded">' +
+        '<img src="' + repo.producto.imagen + '" class="img-fluid img-thumbnail d-block mx-auto rounded">' +
         '</div>' +
         '<div class="col-lg-11 text-left shadow-sm">' +
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
-        '<b>Nombre:</b> ' + repo.nombre + '<br>' +
-        '<b>Descripción:</b> ' + repo.descripcion + '<br>' +
-        '<b>PVP:</b> <span class="badge badge-warning">$' + repo.precio + '</span>' +
+        repo.producto.nombre + ' ' + repo.producto.marca.nombre + ' ' + repo.producto.descripcion.substr(0, 70) + '<br>' +
+        '<b>PVP:</b> <span class="badge badge-warning">$' + parseFloat(repo.pvp_medida).toFixed(2) + '</span>' +
+        '<b>    STOCK:</b> <span class="badge badge-success">' + parseInt(cant_real)  + '</span>' +
+        '<b>    MEDIDA:</b> <span class="badge badge-dark">' + repo.medida + '</span>' +
         '</p>' +
         '</div>' +
         '</div>' +
@@ -135,10 +178,10 @@ function formatRepo_cliente(repo) {
         return repo.text;
     }
     var estado = 'Bloqueado'
-    var html = '<span  class="badge badge-warning" >' + estado + '</span>'
+    var html = '&nbsp<span  class="badge badge-warning" >' + estado + '</span>'
     if (repo.estado === true) {
         estado = 'Activo'
-        html = '<span  class="badge badge-success" >' + estado + '</span>'
+        html = '&nbsp<span  class="badge badge-success" >' + estado + '</span>'
     }
 
     var option = $(
@@ -150,9 +193,8 @@ function formatRepo_cliente(repo) {
         '<div class="col-lg-11 text-left shadow-sm">' +
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
-        '<b>Nombre:</b> ' + repo.cliente + '<br>' +
-        '<b>Cedula:</b> ' + repo.c_i + '<br>' +
-        '<b>Estado:</b> ' + html +
+        '<b>&nbsp' + repo.cliente + '</b><br>' +
+        '<b>C.I:</b> ' + repo.c_i + html +
         '</p>' +
         '</div>' +
         '</div>' +
@@ -167,7 +209,6 @@ function validar() {
 
 $(function () {
     validar();
-
 
     $('select[name="cliente"]').select2({
         theme: "bootstrap4",
@@ -195,67 +236,15 @@ $(function () {
         minimumInputLength: 1,
         templateResult: formatRepo_cliente,
     });
-
-    $('#fecha').datetimepicker({
-        format: 'YYYY-MM-DD HH:mm',
-        date: moment().format("YYYY-MM-DD HH:mm"),
-        locale: 'es',
-        minDate: moment().format("YYYY-MM-DD HH:mm")
-    });
+    $('input[name="fecha"]').val( moment().format("DD-MM-YYYY HH:mm A"));
 
     $('#id_tipo_documento').on('change', function () {
         validar()
     });
 
-
-    $("input[name='iva']").TouchSpin({
-        min: 0,
-        max: 100,
-        step: 0.01,
-        decimals: 2,
-        boostat: 5,
-        maxboostedstep: 10,
-        postfix: '%'
-    }).on('change', function () {
-        vents.calculate_invoice();
-    }).val(0.12);
-
-    // search products
-
-    // $('input[name="search"]').autocomplete({
-    //     source: function (request, response) {
-    //         $.ajax({
-    //             url: window.location.pathname,
-    //             type: 'POST',
-    //             data: {
-    //                 'action': 'search_products',
-    //                 'term': request.term
-    //             },
-    //             dataType: 'json',
-    //         }).done(function (data) {
-    //             response(data);
-    //         }).fail(function (jqXHR, textStatus, errorThrown) {
-    //             //alert(textStatus + ': ' + errorThrown);
-    //         }).always(function (data) {
-    //
-    //         });
-    //     },
-    //     delay: 100,
-    //     minLength: 1,
-    //     select: function (event, ui) {
-    //         event.preventDefault();
-    //         console.clear();
-    //         ui.item.cantidad = 1;
-    //         ui.item.subtotal = 0.00;
-    //         console.log(vents.items);
-    //         vents.add(ui.item);
-    //         $(this).val('');
-    //     }
-    // });
-
     $('.btnRemoveAll').on('click', function () {
         if (vents.items.products.length === 0) return false;
-        alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle?', function () {
+        alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle de productos?', function () {
             vents.items.products = [];
             vents.list();
         }, function () {
@@ -267,29 +256,62 @@ $(function () {
     $('#tblProducts tbody')
         .on('click', 'a[rel="remove"]', function () {
             var tr = tblProducts.cell($(this).closest('td, li')).index();
-            alert_action('Notificación', '¿Estas seguro de eliminar el producto de tu detalle?', function () {
+            var data = vents.items.products[tr.row];
+            alert_action('Notificación', '¿Estas seguro de eliminar el producto: ' + '<strong>' + data.producto.nombre + ' ' + data.producto.marca.nombre + '</strong>' + ' ' + ' <span  class="badge badge-success" > ' + data.medida + '</span>' + ' de tu detalle de productos?', function () {
                 vents.items.products.splice(tr.row, 1);
                 vents.list();
             }, function () {
 
             });
         })
-
         .on('change', 'input[name="cant"]', function () {
-
-            console.clear();
+            if (isNaN(parseFloat($(this).val()))) {
+                $(this).val(1);
+            }
             var cantidad = parseInt($(this).val());
             var tr = tblProducts.cell($(this).closest('td, li')).index();
-            var stock = parseInt(vents.items.products[tr.row].stock);
-            if (cantidad > stock) {
-                vents.items.products[tr.row].cantidad = stock;
+            var data = vents.items.products[tr.row];
+            var stock_r = parseInt(data.producto.stock)
+            var stock_real = parseInt(stock_r / data.conversion_stock)
+            if (cantidad > stock_real) {
+                vents.items.products[tr.row].cantidad = stock_real;
                 Swal.fire('Notificación', '<strong>Stock insuficiente:  </strong> Verificar cantidad a vender');
-                $(this).val(stock);
+                $(this).val(stock_real);
             } else {
                 vents.items.products[tr.row].cantidad = cantidad;
             }
             vents.calculate_invoice();
-            $('td:eq(6)', tblProducts.row(tr.row).node()).html('$' + vents.items.products[tr.row].subtotal.toFixed(2));
+            $('td:eq(5)', tblProducts.row(tr.row).node()).html('$' + vents.items.products[tr.row].subtotal.toFixed(2));
+        })
+        .on('change', 'input[name="desc"]', function () {
+            if (isNaN(parseFloat($(this).val()))) {
+                $(this).val(0.00);
+            }
+            var tr = tblProducts.cell($(this).closest('td, li')).index();
+            var data = vents.items.products[tr.row];
+
+            pvp_item = parseFloat(data.pvp_medida) - parseFloat($(this).val());
+
+            pvp_bruto_iva = parseFloat(data.producto.precio_bruto) * (parseFloat(data.producto.iva) + 1);
+            if (data.tipo_conversion) {
+                pvp_bruto_iva = parseFloat(pvp_bruto_iva) * parseFloat(data.equivalencia);
+            } else {
+                pvp_bruto_iva = parseFloat(pvp_bruto_iva) / parseFloat(data.equivalencia);
+            }
+            if (pvp_item < pvp_bruto_iva) {
+                Swal.fire('Notificación', '<strong>VERIFICAR DESCUENTO:  </strong> Descuento supera el limite maximo permitido');
+                desc_max = parseFloat(data.pvp_medida) - parseFloat(pvp_bruto_iva);
+                vents.items.products[tr.row].descuento = parseFloat(desc_max).toFixed(2);
+                $(this).val(desc_max.toFixed(2))
+            } else {
+                vents.items.products[tr.row].descuento = parseFloat($(this).val());
+            }
+
+            vents.calculate_invoice();
+            pvp_item=parseFloat(data.pvp_medida) - parseFloat($(this).val());
+            $('td:eq(5)', tblProducts.row(tr.row).node()).html('$' + vents.items.products[tr.row].subtotal.toFixed(2));
+            $('td:eq(2)', tblProducts.row(tr.row).node()).html('$' + pvp_item.toFixed(2));
+
         });
 
     $('.btnClearSearch').on('click', function () {
@@ -305,11 +327,9 @@ $(function () {
             return false;
         }
 
-
         vents.items.fecha = $('input[name="fecha"]').val();
         vents.items.cliente = $('select[name="cliente"]').val();
         vents.items.tipo_documento = document.getElementById('id_tipo_documento').checked;
-
 
         if (vents.items.cliente.length === 0) {
             message_error('Seleccione un Cliente');
@@ -318,6 +338,7 @@ $(function () {
 
         var parameters = new FormData();
         parameters.append('action', $('input[name="action"]').val());
+        parameters.append('iva_base', $('input[name="iva"]').val());
         parameters.append('vents', JSON.stringify(vents.items));
         submit_with_ajax(window.location.pathname, 'Notificación', '¿Estas seguro de realizar la siguiente acción?', parameters, function (response) {
             alert_action('Notificación', '¿Desea imprimir la boleta de venta?', function () {
@@ -326,7 +347,6 @@ $(function () {
             }, function () {
                 location.href = '/App_Facturacion/proforma/list/';
             });
-            // location.href = '/App_Facturacion/venta/list/';
         });
     });
 
@@ -359,40 +379,9 @@ $(function () {
         var data = e.params.data;
         data.cantidad = 1;
         data.subtotal = 0.00;
+        data.descuento = 0.00;
         vents.add(data);
         $(this).val('').trigger('change.select2');
     });
-
-    // $('input[name="search"]').autocomplete({
-    //     source: function (request, response) {
-    //         $.ajax({
-    //             url: window.location.pathname,
-    //             type: 'POST',
-    //             data: {
-    //                 'action': 'search_products',
-    //                 'term': request.term
-    //             },
-    //             dataType: 'json',
-    //         }).done(function (data) {
-    //             response(data);
-    //         }).fail(function (jqXHR, textStatus, errorThrown) {
-    //             //alert(textStatus + ': ' + errorThrown);
-    //         }).always(function (data) {
-    //
-    //         });
-    //     },
-    //     delay: 100,
-    //     minLength: 1,
-    //     select: function (event, ui) {
-    //         event.preventDefault();
-    //         console.clear();
-    //         ui.item.cantidad = 1;
-    //         ui.item.subtotal = 0.00;
-    //         console.log(vents.items);
-    //         vents.add(ui.item);
-    //         $(this).val('');
-    //     }
-    // });
-
 })
 ;

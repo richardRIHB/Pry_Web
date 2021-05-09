@@ -27,10 +27,10 @@
 {% block buttons_list %}
     <div class="card-footer">
 
-        <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+        <a class="btn btn-primary btn-sm btnTest btnAdd" style="color: white;">
             <i class="fas fa-plus"></i> Nuevo registro
         </a>
-        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+        <a href="{{ list_url }}" class="btn btn-success btn-sm btnTest">
             <i class="fas fa-sync"></i> Actualizar
         </a>
 
@@ -64,7 +64,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="email">{{ form.username.label }}:</label>
-                                    {{ form.username|attr:'maxlength:20' }}
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text"><i class="fas fa-user mr-2"></i></div>
+                                        </div>
+                                        {{ form.username|attr:'maxlength:20' }}
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="email">{{ form.password.label }}:</label>
@@ -84,7 +89,7 @@
                                     <label for="email">{{ form.email.label }}:</label>
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
-                                            <div class="input-group-text">@</div>
+                                            <div class="input-group-text"><i class="fas fa-at mr-2"></i></div>
                                         </div>
                                         {{ form.email|attr:'maxlength:25' }}
                                     </div>

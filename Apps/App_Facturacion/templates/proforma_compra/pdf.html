@@ -75,7 +75,7 @@
         <th style="width: 10%;">CANT</th>
         <th style="width: 20%;">PRODUCTO</th>
         <th style="width: 50%;">DESCRIPCION</th>
-        <th style="width: 20%;">MARCA</th>
+        <th style="width: 20%;text-align: center;">MARCA &nbsp</th>
     </tr>
     </thead>
     <tbody>
@@ -84,7 +84,7 @@
             <td class="text-center">{{ d.cantidad }}</td>
             <td>{{ d.producto.nombre }}</td>
             <td>{{ d.producto.descripcion }}</td>
-            <td>{{ d.producto.marca }}</td>
+            <td class="text-center">{{ d.producto.marca }}</td>
         </tr>
     {% endfor %}
     </tbody>

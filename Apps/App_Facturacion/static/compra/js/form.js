@@ -76,7 +76,7 @@ var compra_diccionario = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '$'+parseFloat(data).toFixed(2);
+                        return '$'+parseFloat(data).toFixed(3);
 
                     }
                 },
@@ -120,14 +120,14 @@ var compra_diccionario = {
             rowCallback(row, data, displayNum, displayIndex, dataIndex){
                 $(row).find('input[name="cantidad"]').TouchSpin({
                     min:1,
-                    max: 1000,
+                    max: 5000,
                     step: 1,
                 })
                 $(row).find('input[name="precio_new"]').TouchSpin({
                     min:0,
                     max: 500,
-                    step: 0.01,
-                    decimals: 2
+                    step: 0.001,
+                    decimals: 3
                 });
             },
             initComplete: function (settings, json) {
@@ -156,7 +156,7 @@ function formatRepo(repo) {
         '<div class="col-lg-11 text-left shadow-sm">' +
         '<p style="margin-bottom: 0;">' +
         repo.nombre + ' ' + repo.descripcion.substr(0, 70) + '<br>' +
-        '<b>Marca:</b> <span class="badge badge-info">' + repo.marca.nombre + '</span>' + ' ' +
+        '<b>Marca:</b> <span class="badge bg-dark">' + repo.marca.nombre + '</span>' + ' ' +
         '<b>Estado:</b> ' + html +
         '</p>' +
         '</div>' +
@@ -171,7 +171,14 @@ function formatRepo_proveedor(repo) {
         return repo.text;
     }
 
-    var html = '<span  class="badge badge-success" >' + repo.empresa + '</span>'
+    var estado = 'Bloqueado'
+    var html1 = '&nbsp<span  class="badge badge-warning" >' + estado + '</span>'
+    if (repo.estado === true) {
+        estado = 'Activo'
+        html1 = '&nbsp<span  class="badge badge-success" >' + estado + '</span>'
+    }
+
+    var html = '<span  class="badge badge-dark" >' + repo.empresa + '</span>'
 
     var option = $(
         '<div class="wrapper container">' +
@@ -183,8 +190,8 @@ function formatRepo_proveedor(repo) {
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
         '<b>Nombre:</b> ' + repo.proveedor + '<br>' +
-        '<b>Cedula:</b> ' + repo.c_i + '<br>' +
-        '<b>Empresa:</b> ' + html +
+        '<b>C.I:</b> ' + repo.c_i + '<br>' +
+        '<b>Empresa:</b> ' + html +' '+ html1 +
         '</p>' +
         '</div>' +
         '</div>' +
@@ -229,6 +236,11 @@ $(function () {
         date: moment().format("YYYY-MM-DD"),
         locale: 'es',
         maxDate: moment().format("YYYY-MM-DD")
+    })
+    $('input[name="fecha"]').on('change', function () {
+        if (isNaN(parseFloat($(this).val()))) {
+            $(this).val(moment().format("DD-MM-YYYY"));
+        }
     });
 
     $('#id_metodo_pago').on('change', function () {
