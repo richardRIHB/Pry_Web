@@ -1,17 +1,15 @@
-from datetime import datetime
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import Q
-from django.http import JsonResponse
-from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
 
 from Apps.App_Facturacion.forms import gestion_inventario_form
 from Apps.App_Facturacion.models import Inventario, Gestion_Inventario
-
+from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+from datetime import datetime
 
 class gestion_inventario_list_view(LoginRequiredMixin, TemplateView):
     template_name = 'producto_deteriorado/list.html'

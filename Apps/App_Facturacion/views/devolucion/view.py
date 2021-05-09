@@ -11,7 +11,8 @@ from django.views.generic import CreateView, ListView
 from xhtml2pdf import pisa
 from datetime import datetime
 from Apps.App_Facturacion.forms import devolucion_form
-from Apps.App_Facturacion.models import Venta, Detalle_Venta, Empresa, Devolucion, Devolucion_Detalle_Venta, Producto
+from Apps.App_Facturacion.models import Venta, Detalle_Venta, Empresa, Devolucion, \
+    Devolucion_Detalle_Venta, Producto
 from django.views.generic import View
 from django.conf import settings
 
@@ -59,7 +60,6 @@ class devolucion_list_view(LoginRequiredMixin, ListView):
         context['entity'] = 'Devolucion'
         context['date_now'] = datetime.now
         return context
-
 
 class devolucion_create_view(LoginRequiredMixin, CreateView):
     model = Devolucion
@@ -121,7 +121,7 @@ class devolucion_create_view(LoginRequiredMixin, CreateView):
                             det.save()
                             pro = i['producto']
                             pro = Producto.objects.get(id=pro['id'])
-                            pro.stock = float(pro.stock) + (float(i['conversion_stock']) * det.cantidad)
+                            pro.stock = float(pro.stock) + (float(i['conversion_stock'])*det.cantidad)
                             pro.save(update_fields=["stock"])
                     data = {'id': devolucion.id}
             else:
@@ -138,7 +138,6 @@ class devolucion_create_view(LoginRequiredMixin, CreateView):
         context['action'] = 'add'
         context['det'] = []
         return context
-
 
 class devolucion_factura_view(View):
     def link_callback(self, uri, rel):
