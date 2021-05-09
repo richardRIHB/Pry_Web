@@ -26,17 +26,17 @@ class inventario_view(LoginRequiredMixin, TemplateView):
                 data = []
                 for i in Inventario.objects.all():
                     data.append(i.toJSON())
-                for i in Producto.objects.all():
-                    inv = Inventario()
-                    inv.producto_id = i.pk
-                    inv.medida = 'UND'
-                    inv.equivalencia = 1
-                    inv.pvp_medida = i.precio
-                    inv.porcentaje_conversion = 0
-                    inv.tipo_conversion = True
-                    inv.conversion_stock = 1
-                    inv.estado = True
-                    inv.save()
+                # for i in Producto.objects.all():
+                #     inv = Inventario()
+                #     inv.producto_id = i.pk
+                #     inv.medida = 'UND'
+                #     inv.equivalencia = 1
+                #     inv.pvp_medida = i.precio
+                #     inv.porcentaje_conversion = 0
+                #     inv.tipo_conversion = True
+                #     inv.conversion_stock = 1
+                #     inv.estado = True
+                #     inv.save()
             elif action == 'search_producto':
                 data = []
                 prods = Producto.objects.filter(Q(nombre__icontains=request.POST['term']) | Q(descripcion__icontains=request.POST['term']) | Q(marca__nombre__icontains=request.POST['term']))
