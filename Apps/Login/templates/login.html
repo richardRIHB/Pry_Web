@@ -21,15 +21,15 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Vendor CSS-->
-    <link href="{% static 'lib/login/vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
-    <link href="{% static 'lib/login/vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+{#    <link href="{% static 'lib/login/vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">#}
+{#    <link href="{% static 'lib/login/vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">#}
 
     <!-- Main CSS-->
     <link href="{% static 'lib/login/css/main.css' %}" rel="stylesheet" media="all">
 
     <style>
         .card-3 .card-heading {
-            background: url(http://127.0.0.1:8000{{ logo_l }}) top left/cover no-repeat;
+            background: url(http://194.195.211.151/{{ logo_l }}) top left/cover no-repeat;
             display: table-cell;
             width: 50%;
         }
@@ -39,8 +39,8 @@
     <script src="{% static 'lib/sweetalert2/sweetalert2.all.min.js' %}"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{% static 'lib/adminlte/plugins/fontawesome-free/css/all.min.css' %}">
-
+{#    <link rel="stylesheet" href="{% static 'lib/adminlte/plugins/fontawesome-free/css/all.min.css' %}">#}
+    <link rel="stylesheet" href="{% static 'lib/fontawesome-free-5.13.1-web/css/all.min.css' %}">
 </head>
 
 <body>
@@ -57,7 +57,6 @@
 
                 <div class="card-body">
                     <h2 class="title " >INICIO DE SESIÓN</h2>
-
                     <form class="title" action="." method="post">
                         <input type="hidden" name="next" value="{{ next }}">
                         {% csrf_token %}
@@ -108,12 +107,9 @@
     <!-- Jquery JS-->
     <script src="{%  static 'lib/login/vendor/jquery/jquery.min.js' %}"></script>
     <!-- Vendor JS-->
-    <script src="{% static 'lib/login/vendor/select2/select2.min.js' %}v"></script>
-    <script src="{% static 'lib/login/vendor/datepicker/moment.min.js' %}"></script>
-    <script src="{% static 'lib/login/vendor/datepicker/daterangepicker.js' %}"></script>
 
     <!-- Main JS-->
-    <script src="{% static 'lib/login/js/global.js' %}"></script>
+{#    <script src="{% static 'lib/login/js/global.js' %}"></script>#}
 
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 

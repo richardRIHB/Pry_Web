@@ -281,21 +281,21 @@
                                        id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-7" id="id_inventario" style="display:none">
-                                <!-- small box -->
-                                <div class="small-box" style="background:#38c20a">
-                                    <div class="inner">
-                                        <h3>Inventario</h3>
-                                        <h4>{{ count_inventario }}</h4>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-clipboard-list"></i>
-                                    </div>
-                                    <a href="{% url 'App_Facturacion:inventario_list' %}" class="small-box-footer"
-                                       id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
                         {% endif %}
+                        <div class="col-lg-3 col-7" id="id_inventario" style="display:none">
+                            <!-- small box -->
+                            <div class="small-box" style="background:#38c20a">
+                                <div class="inner">
+                                    <h3>Inventario</h3>
+                                    <h4>{{ count_inventario }}</h4>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <a href="{% url 'App_Facturacion:inventario_list' %}" class="small-box-footer"
+                                   id="ingresar">Ingresar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
                     </div>
 
                 </div>

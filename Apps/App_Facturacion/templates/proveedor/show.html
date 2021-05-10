@@ -22,7 +22,11 @@
                     <div class="box box-primary">
 
                         <div class="contenedorImagen" id="big">
-                            <img class="img-responsive" width="100%" src="/media/{{ object.imagen }}" alt="Photo">
+                            {% if object.imagen  %}
+                                <img class="img-responsive" width="100%" src="/media/{{ object.imagen }}" alt="Photo">
+                            {% else %}
+                                <img class="img-responsive" width="100%" src="{% static 'img/empty.png' %}" alt="Photo">
+                            {% endif %}
                         </div>
 
                     </div>
@@ -60,11 +64,19 @@
                             <hr>
 
                             <strong><i class="fas fa-mobile"></i> Celular:</strong>
-                            <p>&nbsp;{{ object.celular }}</p>
+                            {% if object.celular  %}
+                                <p>&nbsp;{{ object.celular }}</p>
+                            {% else %}
+                                <p>&nbsp;No registrado</p>
+                            {% endif %}
                             <hr>
 
                             <strong><i class="fas fa-envelope"></i> Correo:</strong>
-                            <p>&nbsp;{{ object.correo }}</p>
+                            {% if object.correo  %}
+                                <p>&nbsp;{{ object.correo }}</p>
+                            {% else %}
+                                <p>&nbsp;No registrado</p>
+                            {% endif %}
                             <hr>
 
                             <strong><i class="fa fa-user-check"></i> Estado:</strong>

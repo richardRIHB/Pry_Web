@@ -39,7 +39,11 @@
                         <!-- /.box-header -->
                         <div class="box-body">
                             <strong><i class="fas fa-edit"></i> Ruc:</strong>
-                            <p class="text-muted">&nbsp;{{ object.ruc }}</p>
+                            {% if object.ruc  %}
+                                <p class="text-muted">&nbsp;{{ object.ruc }}</p>
+                            {% else %}
+                                <p class="text-muted">&nbsp;No registrado</p>
+                            {% endif %}
                             <hr>
 
                             <strong><i class="fas fa-user-tag"></i> Cedula de Identidad:</strong>
@@ -63,11 +67,19 @@
                             <hr>
 
                             <strong><i class="fas fa-mobile"></i> Celular:</strong>
-                            <p class="text-muted">&nbsp;{{ object.celular }}</p>
+                            {% if object.celular  %}
+                                <p class="text-muted">&nbsp;{{ object.celular }}</p>
+                            {% else %}
+                                <p class="text-muted">&nbsp;No registrado</p>
+                            {% endif %}
                             <hr>
 
                             <strong><i class="fas fa-envelope"></i> Correo:</strong>
-                            <p class="text-muted">&nbsp;{{ object.correo }}</p>
+                            {% if object.correo  %}
+                                <p class="text-muted">&nbsp;{{ object.correo }}</p>
+                            {% else %}
+                                <p class="text-muted">&nbsp;No registrado</p>
+                            {% endif %}
                             <hr>
 
                             <strong><i class="fa fa-user-check"></i> Estado:</strong>
