@@ -31,6 +31,7 @@ class login_form_view(LoginView):
         except:
             ima = '{}{}'.format(settings.MEDIA_URL, 'logo_login.jpg')
         context['logo_l'] = ima
+        print(ima)
         return context
 
 

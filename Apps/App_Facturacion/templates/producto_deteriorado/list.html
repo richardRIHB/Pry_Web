@@ -68,13 +68,11 @@
                             <input name="action" type="hidden" value="add">
                             <input name="id" id="id" type="hidden" value="0">
                             <div class="form-group">
-                                    <label for="email">Producto:</label>
-                                    {{ form.inventario }}
+                                <label for="email">Producto:</label>
+                                {{ form.inventario }}
                             </div>
-                            <div>
-                                <i class="fas fa-info-circle text_producto">
+                            <div class="text_producto">
 
-                                </i>
                             </div>
                             <div class="primera-columna">
                                 <div class="form-group">
@@ -144,8 +142,9 @@
         $("#id_galeria").hide();
         $("#id_inventario").show();
         $("#id_cuentas").show();
+
         $('#myModalGestion').on('shown.bs.modal', function () {
-            $('#id_inventario').focus()
+            $('#id_cantidad').focus()
         });
         $(function () {
             $('.select22').select2({

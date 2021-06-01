@@ -16,7 +16,6 @@ function get_data() {
             dataSrc: ""
         },
         columns: [
-
             {"data": "id"},
             {"data": "proveedor.proveedor"},
             {"data": "fecha"},

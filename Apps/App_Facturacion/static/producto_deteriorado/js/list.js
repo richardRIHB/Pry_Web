@@ -178,7 +178,7 @@ $(function () {
 
     $('.btnAdd').on('click', function () {
         $('input[name="action"]').val('add');
-        modal_title.find('span').html('Creación de un Producto de Gestion Inventario');
+        modal_title.find('span').html('Creación de un Registro');
         $('input[name="cantidad"]').trigger("touchspin.updatesettings", {max: 10000});
         $('input[name="cantidad"]').trigger("touchspin.updatesettings", {min: 1});
         $('form')[0].reset();
@@ -256,8 +256,8 @@ $(function () {
             footer.innerHTML = ''
             stock_r = parseInt(data.inventario.producto.stock)
             cant_real = stock_r / data.inventario.conversion_stock
-            elemento.innerHTML = 'Descripcion: ' +  data.inventario.producto.nombre +' '+ data.inventario.producto.marca.nombre +' '+ data.inventario.medida +
-                ' '+ '<span class="badge badge-dark">'+parseInt(cant_real)+'</span>'
+            elemento.innerHTML = '<i class="fas fa-info-circle text_producto">'+'Descripcion: ' +  data.inventario.producto.nombre +' '+ data.inventario.producto.marca.nombre +' '+ data.inventario.medida +
+                ' '+ '<span class="badge badge-dark">'+parseInt(cant_real)+'</span>'+'</i>'
             //bloqueo de los input
             $(".select2").prop("disabled", 'True');
             $("#id_cantidad").attr('readonly','True');
@@ -329,8 +329,8 @@ $(function () {
         var elemento = document.querySelector(".text_producto");
         stock_r = parseInt(data.producto.stock)
         cant_real = stock_r / data.conversion_stock
-        elemento.innerHTML = 'Descripcion: ' +  data.producto.nombre +' '+ data.producto.marca.nombre +' '+ data.medida +
-            ' '+ '<span class="badge badge-dark">'+parseInt(cant_real)+'</span>'
+        elemento.innerHTML = '<i class="fas fa-info-circle text_producto">'+'Descripcion: ' +  data.producto.nombre +' '+ data.producto.marca.nombre +' '+ data.medida +
+            ' '+ '<span class="badge badge-dark">'+parseInt(cant_real)+'</span>'+'</i>'
         calcularPVP();
     });
 });

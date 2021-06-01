@@ -50,20 +50,35 @@ class venta_list_view(LoginRequiredMixin, ListView):
             elif action == 'anular':
                 with transaction.atomic():
                     venta = Venta.objects.get(id=request.POST['id'])
-                    venta.estado = False
-                    venta.save(update_fields=["estado"])
                     if Cuentas.objects.filter(venta_id=venta.id).exists():
                         cuentas_v = Cuentas.objects.get(venta_id=venta.id)
-                        cuentas_v.estado_venta = False
-                        cuentas_v.save(update_fields=["estado_venta"])
-                    if Pedido.objects.filter(venta_id=venta.id).exists():
-                        pedido = Pedido.objects.get(venta_id=venta.id)
-                        pedido.estado = False
-                        pedido.save(update_fields=["estado"])
-                    for i in venta.detalle_venta_set.all():
-                        pro = Producto.objects.get(id=i.inventario.producto.id)
-                        pro.stock = float(pro.stock) + (float(i.cantidad)*float(i.inventario.conversion_stock))
-                        pro.save(update_fields=["stock"])
+                        if cuentas_v.estado:
+                            venta.estado = False
+                            venta.save(update_fields=["estado"])
+                            cuentas_v.estado_venta = False
+                            cuentas_v.save(update_fields=["estado_venta"])
+                            if Pedido.objects.filter(venta_id=venta.id).exists():
+                                pedido = Pedido.objects.get(venta_id=venta.id)
+                                pedido.estado = False
+                                pedido.save(update_fields=["estado"])
+                            for i in venta.detalle_venta_set.all():
+                                pro = Producto.objects.get(id=i.inventario.producto.id)
+                                pro.stock = float(pro.stock) + (
+                                            float(i.cantidad) * float(i.inventario.conversion_stock))
+                                pro.save(update_fields=["stock"])
+                        else:
+                            data['error'] = 'No se puede eliminar la Factura, debido a que tiene un saldo pendiente de.- $'+ str(cuentas_v.saldo)
+                    else:
+                        venta.estado = False
+                        venta.save(update_fields=["estado"])
+                        if Pedido.objects.filter(venta_id=venta.id).exists():
+                            pedido = Pedido.objects.get(venta_id=venta.id)
+                            pedido.estado = False
+                            pedido.save(update_fields=["estado"])
+                        for i in venta.detalle_venta_set.all():
+                            pro = Producto.objects.get(id=i.inventario.producto.id)
+                            pro.stock = float(pro.stock) + (float(i.cantidad)*float(i.inventario.conversion_stock))
+                            pro.save(update_fields=["stock"])
             elif action == 'add':
                 with transaction.atomic():
                     pedido = Pedido()

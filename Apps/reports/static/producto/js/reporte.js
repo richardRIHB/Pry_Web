@@ -45,7 +45,6 @@ function generate_report() {
                 customize: function ( xlsx ) {
                     var sheet = xlsx.xl.worksheets['sheet1.xml'];
                     $('c[r=A1] t', sheet).text( 'TIPO DE REPORTE: '+t_filtro_excel);
-                    $('row c[r*="2"]', sheet).attr( 's', '2' );
                     $('row c[r^="A"]', sheet).attr( 's', '2' );
                 },
             },

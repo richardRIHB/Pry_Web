@@ -938,7 +938,6 @@ class gestion_inventario_form(ModelForm):
                 attrs={
                     'class': "form-control select2",
                     'style': 'width: 100%',
-                    'autofocus': "autofocus",
                 }
             ),
             'descripcion': Textarea(

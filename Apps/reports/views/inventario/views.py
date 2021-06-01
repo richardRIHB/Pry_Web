@@ -56,7 +56,7 @@ class reporte_inventario_view(LoginRequiredMixin, TemplateView):
                             format(s.pvp_medida, '.2f')
                         ])
                 else:
-                    prod_inv = Inventario.objects.all()
+                    prod_inv = Inventario.objects.all().order_by('producto_id')
                     if t_estado == 'btnActivo':
                         prod_inv = prod_inv.filter(estado=True)
                     elif t_estado == 'btnBloqueado':
@@ -147,7 +147,7 @@ class reporte_inventario_pdf_view(LoginRequiredMixin, View):
             prod_inv = ''
             text_estado = 'Todo'
             if pk == 'null':
-                prod_inv = Inventario.objects.all()
+                prod_inv = Inventario.objects.all().order_by('producto_id')
                 if t_estado == 'btnActivo':
                     prod_inv = prod_inv.filter(estado=True)
                     text_estado = 'Activo'

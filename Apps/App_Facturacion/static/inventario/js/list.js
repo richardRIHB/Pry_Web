@@ -179,6 +179,8 @@ $(function () {
         $('form')[0].reset();
         $('select[name="tipo_conversion"]').val('True').trigger('change');
         limpiarFormModal();
+        var elemento = document.querySelector(".text_producto");
+        elemento.innerHTML = ''
         $("#id_estado").attr('checked','True');
         $('#myModalInventario').modal('show');
     });
@@ -188,6 +190,8 @@ $(function () {
         if (res === ''){
             $('input[name="pvp"]').val('0.00');
             $('input[name="conversion_stock"]').val('0.00');
+            var elemento = document.querySelector(".text_producto");
+            elemento.innerHTML = ''
         }
         calcularPVP();
     });
@@ -228,6 +232,11 @@ $(function () {
             }else {
                  $('#id_estado').removeAttr('checked','False');
             }
+            stock_r = parseInt(data.producto.stock)
+            cant_real = stock_r / data.conversion_stock
+            var elemento = document.querySelector(".text_producto");
+            elemento.innerHTML = '<i class="fas fa-info-circle text_producto">'+'Descripcion: ' +  data.producto.nombre +' '+ data.producto.marca.nombre +' '+ data.medida +
+                ' '+ '<span class="badge badge-dark">'+parseInt(cant_real)+'</span>'+'</i>'
             //calcularPVP();
             $('#myModalInventario').modal('show');
         })
@@ -283,6 +292,9 @@ $(function () {
     }).on('select2:select', function (e) {
         var data = e.params.data;
         $('input[name="pvp"]').val(data.precio);
+        var elemento = document.querySelector(".text_producto");
+        elemento.innerHTML = '<i class="fas fa-info-circle text_producto">'+'Descripcion: ' +  data.nombre +' '+ data.marca.nombre +' ' +
+            ' '+ '<span class="badge badge-dark">'+parseInt(data.stock)+'</span>'+'</i>'
         calcularPVP();
     });
 

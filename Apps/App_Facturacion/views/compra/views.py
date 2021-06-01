@@ -44,39 +44,85 @@ class compra_view(LoginRequiredMixin, TemplateView):
                         contador = 1
                 if contador == 0:
                     with transaction.atomic():
-                        for i in comp.detalle_compra_set.all():
-                            prod = Producto.objects.get(pk=i.producto.id)
-                            precio_base_actual = float(prod.stock) * float(prod.precio_bruto)
-                            precio_base_compra = i.cantidad * float(i.precio)
-                            precio_base_acumulado = precio_base_actual - precio_base_compra
-                            stock_acumulado = float(prod.stock) - i.cantidad
-                            precio_actualizado = precio_base_acumulado / stock_acumulado
-                            prod.precio_bruto = precio_actualizado
-                            prod.stock -= i.cantidad
-                            calculo_iva = float(prod.precio_bruto) * (float(prod.iva) + 1)
-                            calculo_ganancia = calculo_iva * ((float(prod.porcentaje_ganancia)/100) + 1)
-                            prod.precio = calculo_ganancia
-                            prod.save()
+                        if Cuentas_Compra.objects.filter(compra_id=comp.id).exists():
+                            cuentas_com = Cuentas_Compra.objects.get(compra_id=comp.id)
+                            if cuentas_com.estado:
+                                cuentas_com.estado_compra = False
+                                cuentas_com.save()
+                                comp.estado = False
+                                comp.save()
+                                for i in comp.detalle_compra_set.all():
+                                    prod = Producto.objects.get(pk=i.producto.id)
+                                    precio_base_actual = float(prod.stock) * float(prod.precio_bruto)
+                                    precio_base_compra = i.cantidad * float(i.precio)
+                                    precio_base_acumulado = precio_base_actual - precio_base_compra
+                                    stock_acumulado = float(prod.stock) - i.cantidad
+                                    precio_actualizado = 0
+                                    if precio_base_acumulado == 0:
+                                        precio_actualizado = 0
+                                    elif stock_acumulado == 0:
+                                        precio_actualizado = prod.precio_bruto
+                                    else:
+                                        precio_actualizado = precio_base_acumulado / stock_acumulado
+                                    prod.precio_bruto = precio_actualizado
+                                    prod.stock -= i.cantidad
+                                    calculo_iva = float(prod.precio_bruto) * (float(prod.iva) + 1)
+                                    calculo_ganancia = calculo_iva * ((float(prod.porcentaje_ganancia) / 100) + 1)
+                                    prod.precio = calculo_ganancia
+                                    prod.save()
 
-                            for a in Inventario.objects.filter(producto_id=prod.pk):
-                                inv = Inventario.objects.get(pk=a.id)
-                                if inv.tipo_conversion == True:
-                                    pvp_medida = float(inv.producto.precio) * float(inv.equivalencia)
-                                    pvp_medida = pvp_medida - ((float(inv.porcentaje_conversion) / 100) * pvp_medida)
-                                    inv.pvp_medida = pvp_medida
-                                    inv.save()
+                                    for a in Inventario.objects.filter(producto_id=prod.pk):
+                                        inv = Inventario.objects.get(pk=a.id)
+                                        if inv.tipo_conversion == True:
+                                            pvp_medida = float(inv.producto.precio) * float(inv.equivalencia)
+                                            pvp_medida = pvp_medida - (
+                                                    (float(inv.porcentaje_conversion) / 100) * pvp_medida)
+                                            inv.pvp_medida = pvp_medida
+                                            inv.save()
+                                        else:
+                                            pvp_medida = float(inv.producto.precio) / float(inv.equivalencia)
+                                            pvp_medida = ((float(inv.porcentaje_conversion) / 100) + 1) * pvp_medida
+                                            inv.pvp_medida = pvp_medida
+                                            inv.save()
+                            else:
+                                data['error'] = 'No se puede eliminar la Factura, debido a que tiene un saldo pendiente de.- $' + str(
+                                    cuentas_com.saldo)
+                        else:
+                            comp.estado = False
+                            comp.save()
+                            for i in comp.detalle_compra_set.all():
+                                prod = Producto.objects.get(pk=i.producto.id)
+                                precio_base_actual = float(prod.stock) * float(prod.precio_bruto)
+                                precio_base_compra = i.cantidad * float(i.precio)
+                                precio_base_acumulado = precio_base_actual - precio_base_compra
+                                stock_acumulado = float(prod.stock) - i.cantidad
+                                precio_actualizado = 0
+                                if precio_base_acumulado == 0:
+                                    precio_actualizado = 0
+                                elif stock_acumulado == 0:
+                                    precio_actualizado = prod.precio_bruto
                                 else:
-                                    pvp_medida = float(inv.producto.precio) / float(inv.equivalencia)
-                                    pvp_medida = ((float(inv.porcentaje_conversion) / 100) + 1) * pvp_medida
-                                    inv.pvp_medida = pvp_medida
-                                    inv.save()
+                                    precio_actualizado = precio_base_acumulado / stock_acumulado
+                                prod.precio_bruto = precio_actualizado
+                                prod.stock -= i.cantidad
+                                calculo_iva = float(prod.precio_bruto) * (float(prod.iva) + 1)
+                                calculo_ganancia = calculo_iva * ((float(prod.porcentaje_ganancia) / 100) + 1)
+                                prod.precio = calculo_ganancia
+                                prod.save()
 
-                        comp.estado = False
-                        comp.save()
-                        if comp.metodo_pago == True:
-                            cuentas_com = Cuentas_Compra.objects.get(compra_id=request.POST['id'])
-                            cuentas_com.estado_compra = False
-                            cuentas_com.save()
+                                for a in Inventario.objects.filter(producto_id=prod.pk):
+                                    inv = Inventario.objects.get(pk=a.id)
+                                    if inv.tipo_conversion == True:
+                                        pvp_medida = float(inv.producto.precio) * float(inv.equivalencia)
+                                        pvp_medida = pvp_medida - (
+                                                    (float(inv.porcentaje_conversion) / 100) * pvp_medida)
+                                        inv.pvp_medida = pvp_medida
+                                        inv.save()
+                                    else:
+                                        pvp_medida = float(inv.producto.precio) / float(inv.equivalencia)
+                                        pvp_medida = ((float(inv.porcentaje_conversion) / 100) + 1) * pvp_medida
+                                        inv.pvp_medida = pvp_medida
+                                        inv.save()
                 else:
                     data['error'] = 'La cantidad de productos es superior al stock actual'
             else:
