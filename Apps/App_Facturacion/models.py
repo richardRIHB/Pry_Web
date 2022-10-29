@@ -591,8 +591,8 @@ class Detalle_Venta(models.Model):
     date_updated = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
-        verbose_name = "Item"
-        verbose_name_plural = "Items"
+        verbose_name = "Detalle Venta"
+        verbose_name_plural = "Detalles de Ventas"
         db_table = 'detalle_venta'
         ordering = ['id']
 
